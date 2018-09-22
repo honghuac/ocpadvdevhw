@@ -1,0 +1,39 @@
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewBuild
+    creationTimestamp: null
+    labels:
+      build: mavenslave
+    name: mavenslave
+  spec:
+    failedBuildsHistoryLimit: 5
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ${GUID}-Jenkins:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      binary: {}
+      type: Binary
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: jenkins-slave-maven-centos7:v3.10
+          namespace: openshift
+      type: Source
+    successfulBuildsHistoryLimit: 5
+    triggers:
+    - github:
+        secret: mWs-en7SxTUjLcYHC6Oa
+      type: GitHub
+    - generic:
+        secret: VYKRw7mmArxHuuu000BW
+      type: Generic
+  status:
+    lastVersion: 0
