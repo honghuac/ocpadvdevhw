@@ -30,19 +30,19 @@ oc project ${GUID}-parks-dev
 
 #Create MongoDB headless service
 
-oc create -f ../templates/setup_dev/mongohlsvc.yaml
+oc create -f "../templates/setup_dev/mongohlsvc.yaml"
 
 sleep 5s;
 
 #Create MongoDB service
 
-oc create -f ../templates/setup_dev/mongosvc.yaml
+oc create -f "../templates/setup_dev/mongosvc.yaml"
 
 sleep 5s;
 
 #Create MongoDB stateful set
 
-oc create -f ../templates/setup_dev/mongosfs.yaml
+oc create -f "../templates/setup_dev/mongosfs.yaml"
 
 sleep 5s;
 
