@@ -14,6 +14,9 @@
 #Set up liveness and readiness probes
 #Expose and label the services properly (parksmap-backend)
 
+#Metadata name of VolumeClaimTemplates and name of volumeMount must be the same. The pair in dev must be distinct from the pair in prod.
+
+
 if [ "$#" -ne 1 ]; then
     echo "Usage:"
     echo "  $0 GUID"
@@ -22,6 +25,27 @@ fi
 
 GUID=$1
 echo "Setting up Parks Development Environment in project ${GUID}-parks-dev"
+
+oc project ${GUID}-parks-dev
+
+#Create MongoDB headless service
+
+oc create -f ../templates/setup_dev/mongohlsvc.yaml
+
+sleep 5s;
+
+#Create MongoDB service
+
+oc create -f ../templates/setup_dev/mongosvc.yaml
+
+sleep 5s;
+
+#Create MongoDB stateful set
+
+oc create -f ../templates/setup_dev/mongosfs.yaml
+
+sleep 5s;
+
 oc new-build --binary=true --name="mlbparks" jboss-eap70-openshift:1.7 -n ${GUID}-parks-dev
 
 sleep 5s;
