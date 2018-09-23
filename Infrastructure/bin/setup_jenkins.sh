@@ -1,5 +1,23 @@
 #!/bin/bash
 # Setup Jenkins Project
+
+# Code to set up the Jenkins project to execute the
+# three pipelines.
+# This will need to also build the custom Maven Slave Pod
+# Image to be used in the pipelines.
+# Finally the script needs to create three OpenShift Build
+# Configurations in the Jenkins Project to build the
+# three micro services. Expected name of the build configs:
+# * mlbparks-pipeline
+# * nationalparks-pipeline
+# * parksmap-pipeline
+# The build configurations need to have two environment variables to be passed to the Pipeline:
+# * GUID: the GUID used in all the projects
+# * CLUSTER: the base url of the cluster used (e.g. na39.openshift.opentlc.com)
+
+# To be Implemented by Student
+
+
 #Create a Jenkins instance with persistent storage and sufficient resources
 #Create a build configuration to build the custom Maven slave pod to include Skopeo
 #Set up three build configurations with pointers to the pipelines in the source code project.
@@ -21,9 +39,21 @@ REPO=$2
 CLUSTER=$3
 echo "Setting up Jenkins in project ${GUID}-jenkins from Git Repo ${REPO} for Cluster ${CLUSTER}"
 oc new-app jenkins-persistent --param ENABLE_OAUTH=true --param MEMORY_LIMIT=2Gi --param VOLUME_CAPACITY=4Gi -n ${GUID}-jenkins
+
+sleep 5s;
+
 oc new-app openshift/jenkins-slave-maven-centos7:v3.10
+
+sleep 5s;
+
 oc new-app mlbparks-pipeline
+
+sleep 5s;
+
 oc new-app natparks-pipeline
+
+sleep 5s;
+
 oc new-app parksmap-pipeline
 
 #b. Create Dockerfile for Docker image containing CentOS
