@@ -57,3 +57,13 @@ sleep 30s;
 docker login -u opentlc-mgr -p $(oc whoami -t) docker-registry-default.apps.${GUID}.openshift.opentlc.com
 docker push docker-registry-default.apps.$GUID.openshift.opentlc.com/xyz-jenkins/jenkins-slave-maven-appdev:v3.9
 sleep 30s;
+
+#d. Create 3 Jenkin Pipeline apps and BCs
+oc new-app mlbparks-pipeline
+sleep 5s;
+
+oc new-app nationalparks-pipeline
+sleep 5s;
+
+oc new-app parksmap-pipeline
+sleep 5s;
