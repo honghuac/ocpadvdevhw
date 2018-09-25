@@ -21,6 +21,25 @@ podTemplate(
     // Also copy "../nexus_settings.xml" to your build directory
     // and replace 'GUID' in the file with your ${GUID} to point to >your< Nexus instance
 
+    sh "cd $HOME"
+
+    sh "git clone https://github.com/honghuac/ocpadvdevhw"
+
+    sh "mvn -s ../nexus_settings.xml clean package spring-boot:repackage -DskipTests -Dcom.redhat.xpaas.repo.redhatga"
+
+    sh "oc policy add-role-to-user view --serviceaccount=default"
+
+    sh "oc new-build --binary=true --name=parksmap-binary --image-stream=redhat-openjdk18-openshift:1.2"
+
+    sh "oc start-build parksmap-binary --from-file=$HOME/ocpadvdevhw/ParksMap/target/parksmap.jar --follow"
+
+    sh "oc new-app parksmap-binary"
+
+    sh" oc expose svc/parksmap-binary --labels='type=parksmap-backend'"
+
+    sh "curl -i -v -k `echo "https://"$(oc get route/parksmap-binary -o template --template {{.spec.host}})"/ws/backends/list"`
+
+    sh "curl -i -v -k `echo "https://"$(oc get route/parksmap-binary -o template --template {{.spec.host}})"/ws/appname"`
   }
 }
 
