@@ -38,31 +38,22 @@ GUID=$1
 REPO=$2
 CLUSTER=$3
 echo "Setting up Jenkins in project ${GUID}-jenkins from Git Repo ${REPO} for Cluster ${CLUSTER}"
-oc new-app jenkins-persistent --param ENABLE_OAUTH=true --param MEMORY_LIMIT=2Gi --param VOLUME_CAPACITY=4Gi -n ${GUID}-jenkins
 
+#a. Create Jenkins app - without correct imagestream
+oc new-app jenkins-persistent --param ENABLE_OAUTH=true --param MEMORY_LIMIT=2Gi --param VOLUME_CAPACITY=4Gi --param DISABLE_ADMINISTRATIVE_MONITORS=true -n ${GUID}-jenkins
 sleep 5s;
 
-oc new-app openshift/jenkins-slave-maven-centos7:v3.10
-
-sleep 5s;
-
-oc new-app mlbparks-pipeline
-
-sleep 5s;
-
-oc new-app natparks-pipeline
-
-sleep 5s;
-
-oc new-app parksmap-pipeline
-
-#b. Create Dockerfile for Docker image containing CentOS
-#FROM docker.io/openshift/jenkins-slave-maven-centos7:v3.9
-#USER root
-#RUN yum -y install skopeo apb && \
-#    yum clean all
-#USER 1001
+#b. Download Docker registries config and Dockerfile for Docker image containing CentOS
+#wget Dockerfile to $HOME/infrastructure/templates/Dockerfile ?
+#wget registries.conf and override /etc/containers/registries.conf ?
+sudo -i
+systemctl enable docker
+systemctl start docker
+cd $HOME/infrastructure/templates/
 
 #c. Build, Tag, Push Docker image
-#docker build . -t docker-registry-default.apps.dev39.openshift.opentlc.com/hong-cicd/jenkins-slave-maven-appdev:v3.9
-#docker push docker-registry-default.apps.dev39.openshift.opentlc.com/hong-cicd/jenkins-slave-maven-appdev:v3.9
+docker build . -t docker-registry-default.apps.${GUID}.openshift.opentlc.com/hchin-jenkins/jenkins-slave-maven-appdev:v3.10
+sleep 30s;
+docker login -u opentlc-mgr -p $(oc whoami -t) docker-registry-default.apps.${GUID}.openshift.opentlc.com
+docker push docker-registry-default.apps.$GUID.openshift.opentlc.com/xyz-jenkins/jenkins-slave-maven-appdev:v3.9
+sleep 30s;
