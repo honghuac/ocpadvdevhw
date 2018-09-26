@@ -59,17 +59,20 @@ oc start-build parksmap-binary --from-file=$HOME/ocpadvdevhw/ParksMap/target/par
 sleep 5s;
 
 oc new-app ${GUID}-parks-dev/parksmap:0.0-0 --name=parksmap --allow-missing-imagestream-tags=true -n ${GUID}-parks-dev
-oc expose svc/parksmap-binary --labels='type=parksmap-backend'
+oc expose svc parksmap--labels='type=parksmap-backend'
 
-oc create configmap parksmap-config --from-literal="parksmap.properties=Placeholder" -n ${GUID}-parks-dev
-oc set volume dc/parksmap --add --name=parksmap-config --mount-path=$HOME/parksmap.properties --configmap-name=parksmap-config -n ${GUID}-parks-dev
+oc delete configmap parksmap-config -n ${GUID}-parks-dev --ignore-not-found=true
+oc create configmap parksmap-config --from-file=$HOME/Infrastructure/templates/setup_dev/parksmap.properties -n ${GUID}-parks-dev
+
+#oc create configmap parksmap-config --from-literal="parksmap.properties=Placeholder" -n ${GUID}-parks-dev
+oc set volume dc/parksmap --add --name=parksmap-config --mount-path=$HOME/Infrastructure/templates/setup_dev/parksmap.properties --configmap-name=parksmap-config -n ${GUID}-parks-dev
 #are tags needed for dc?
 sleep 5s;
 
 #Test ParksMap app
 
-curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/parksmap -o template --template {{.spec.host}})"/ws/backends/list/"`
-curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/parksmap -o template --template {{.spec.host}})"/ws/appname/"`
+#curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/parksmap -o template --template {{.spec.host}})"/ws/backends/list/"`
+#curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/parksmap -o template --template {{.spec.host}})"/ws/appname/"`
 
 
 #Build MLBParks app
@@ -77,7 +80,7 @@ curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/parksmap -o templ
 oc new-build --binary=true --name="mlbparks-binary" --image-stream=jboss-eap70-openshift:1.7 -n ${GUID}-parks-dev
 sleep 5s;
 
-oc start-build parksmap-binary --from-file=$HOME/ocpadvdevhw/MLBParks/target/mlbparks.jar --follow -n ${GUID}-parks-dev
+oc start-build mlbparks-binary --from-file=$HOME/ocpadvdevhw/MLBParks/target/mlbparks.jar --follow -n ${GUID}-parks-dev
 sleep 5s;
 
 oc new-app ${GUID}-parks-dev/mlbparks:0.0-0 --name=mlbparks --allow-missing-imagestream-tags=true -n ${GUID}-parks-dev
@@ -85,17 +88,21 @@ sleep 5s;
 
 #oc expose dc mlbparks --port 8080 -n ${GUID}-parks-dev ??
 
-oc expose svc mlbparks -n ${GUID}-parks-dev
-oc create configmap mlbparks-config --from-literal="mlbparks.properties=Placeholder" -n ${GUID}-parks-dev
-oc set volume dc/mlbparks --add --name=mlbparks-config --mount-path=$HOME/mlbparks.properties --configmap-name=mlbparks-config -n ${GUID}-parks-dev
+oc expose svc mlbparks --labels='type=parksmap-backend' -n ${GUID}-parks-dev
+
+oc delete configmap mlbparks-config -n ${GUID}-parks-dev --ignore-not-found=true
+oc create configmap mlbparks-config --from-file=$HOME/Infrastructure/templates/setup_dev/mlbparks.properties -n ${GUID}-parks-dev
+
+#oc create configmap mlbparks-config --from-literal="mlbparks.properties=Placeholder" -n ${GUID}-parks-dev
+oc set volume dc/mlbparks --add --name=mlbparks-config --mount-path=$HOME/Infrastructure/templates/setup_dev/mlbparks.properties --configmap-name=mlbparks-config -n ${GUID}-parks-dev
 #are tags needed for dc?
 sleep 5s;
 
 #Test MLBParks app
 
-curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/mlbparks -o template --template {{.spec.host}})"/ws/healthz/"`
-curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/mlbparks -o template --template {{.spec.host}})"/ws/data/load/"`
-curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/mlbparks -o template --template {{.spec.host}})"/ws/info/"`
+#curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/mlbparks -o template --template {{.spec.host}})"/ws/healthz/"`
+#curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/mlbparks -o template --template {{.spec.host}})"/ws/data/load/"`
+#curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/mlbparks -o template --template {{.spec.host}})"/ws/info/"`
 
 
 #Build NationalParks app
@@ -110,14 +117,19 @@ sleep 5s;
 
 #oc expose dc nationalparks --port 8080 -n ${GUID}-parks-dev ??
 
-oc expose svc nationalparks -n ${GUID}-parks-dev
-oc create configmap nationalparks-config --from-literal="nationalparks.properties=Placeholder"
-oc set volume dc/nationalparks --add --name=nationalparks-config --mount-path=$HOME/nationalparks.properties --configmap-name=nationalparks-config -n ${GUID}-parks-dev
+oc expose svc nationalparks --labels='type=parksmap-backend' -n ${GUID}-parks-dev
+
+oc delete configmap nationalparks-config -n ${GUID}-parks-dev --ignore-not-found=true
+oc create configmap nationalparks-config --from-file=$HOME/Infrastructure/templates/setup_dev/nationalparks.properties -n ${GUID}-parks-dev
+
+#oc create configmap nationalparks-config --from-literal="nationalparks.properties=Placeholder"
+oc set volume dc/nationalparks --add --name=nationalparks-config --mount-path=$HOME/Infrastructure/templates/setup_dev/nationalparks.properties --configmap-name=nationalparks-config -n ${GUID}-parks-dev
 #are tags needed for dc?
+
 sleep 5s;
 
 #Test NationalParks app
 
-curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/nationalparks -o template --template {{.spec.host}})"/ws/healthz/"`
-curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/nationalparks -o template --template {{.spec.host}})"/ws/data/load/"`
-curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/nationalparks -o template --template {{.spec.host}})"/ws/info/"`
+#curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/nationalparks -o template --template {{.spec.host}})"/ws/healthz/"`
+#curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/nationalparks -o template --template {{.spec.host}})"/ws/data/load/"`
+#curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/nationalparks -o template --template {{.spec.host}})"/ws/info/"`
