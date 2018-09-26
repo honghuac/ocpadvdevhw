@@ -30,25 +30,25 @@ oc project ${GUID}-parks-dev
 
 #Create MongoDB headless service
 
-oc create -f "../templates/setup_dev/mongohlsvc.yaml"
+oc create -f "../templates/setup_dev/mongohlsvc.yaml" -n ${GUID}-parks-dev
 
 sleep 5s;
 
 #Create MongoDB service
 
-oc create -f "../templates/setup_dev/mongosvc.yaml"
+oc create -f "../templates/setup_dev/mongosvc.yaml" -n ${GUID}-parks-dev
 
 sleep 5s;
 
 #Create MongoDB stateful set
 
-oc create -f "../templates/setup_dev/mongosfs.yaml"
+oc create -f "../templates/setup_dev/mongosfs.yaml" -n ${GUID}-parks-dev
 
 sleep 5s;
 
 #Add role
 
-oc policy add-role-to-user view --serviceaccount=default
+oc policy add-role-to-user view --serviceaccount=default -n ${GUID}-parks-dev
 
 #Build ParksMap app
 
@@ -59,7 +59,9 @@ oc start-build parksmap-binary --from-file=$HOME/ocpadvdevhw/ParksMap/target/par
 sleep 5s;
 
 oc new-app ${GUID}-parks-dev/parksmap:0.0-0 --name=parksmap --allow-missing-imagestream-tags=true -n ${GUID}-parks-dev
-oc expose svc parksmap--labels='type=parksmap-backend'
+sleep 5s;
+
+oc expose svc parksmap --port 8080 --labels='type=parksmap-backend'
 
 oc delete configmap parksmap-config -n ${GUID}-parks-dev --ignore-not-found=true
 oc create configmap parksmap-config --from-file=$HOME/Infrastructure/templates/setup_dev/parksmap.properties -n ${GUID}-parks-dev
@@ -68,6 +70,10 @@ oc create configmap parksmap-config --from-file=$HOME/Infrastructure/templates/s
 oc set volume dc/parksmap --add --name=parksmap-config --mount-path=$HOME/Infrastructure/templates/setup_dev/parksmap.properties --configmap-name=parksmap-config -n ${GUID}-parks-dev
 #are tags needed for dc?
 sleep 5s;
+
+oc set probe dc/parksmap --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
+oc set probe dc/parksmap --readiness --failure-threshold 3 --initial-delay-seconds 20 --get-url=http://:8080/ws/appname/
+
 
 #Test ParksMap app
 
@@ -86,9 +92,7 @@ sleep 5s;
 oc new-app ${GUID}-parks-dev/mlbparks:0.0-0 --name=mlbparks --allow-missing-imagestream-tags=true -n ${GUID}-parks-dev
 sleep 5s;
 
-#oc expose dc mlbparks --port 8080 -n ${GUID}-parks-dev ??
-
-oc expose svc mlbparks --labels='type=parksmap-backend' -n ${GUID}-parks-dev
+oc expose svc mlbparks --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-dev
 
 oc delete configmap mlbparks-config -n ${GUID}-parks-dev --ignore-not-found=true
 oc create configmap mlbparks-config --from-file=$HOME/Infrastructure/templates/setup_dev/mlbparks.properties -n ${GUID}-parks-dev
@@ -97,6 +101,10 @@ oc create configmap mlbparks-config --from-file=$HOME/Infrastructure/templates/s
 oc set volume dc/mlbparks --add --name=mlbparks-config --mount-path=$HOME/Infrastructure/templates/setup_dev/mlbparks.properties --configmap-name=mlbparks-config -n ${GUID}-parks-dev
 #are tags needed for dc?
 sleep 5s;
+
+oc set probe dc/mlbparks --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
+oc set probe dc/mlbparks --readiness --failure-threshold 3 --initial-delay-seconds 20 --get-url=http://:8080/ws/healthz/
+
 
 #Test MLBParks app
 
@@ -115,9 +123,7 @@ sleep 5s;
 oc new-app ${GUID}-parks-dev/nationalparks:0.0-0 --name=nationalparks --allow-missing-imagestream-tags=true -n ${GUID}-parks-dev
 sleep 5s;
 
-#oc expose dc nationalparks --port 8080 -n ${GUID}-parks-dev ??
-
-oc expose svc nationalparks --labels='type=parksmap-backend' -n ${GUID}-parks-dev
+oc expose svc nationalparks --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-dev
 
 oc delete configmap nationalparks-config -n ${GUID}-parks-dev --ignore-not-found=true
 oc create configmap nationalparks-config --from-file=$HOME/Infrastructure/templates/setup_dev/nationalparks.properties -n ${GUID}-parks-dev
@@ -125,6 +131,9 @@ oc create configmap nationalparks-config --from-file=$HOME/Infrastructure/templa
 #oc create configmap nationalparks-config --from-literal="nationalparks.properties=Placeholder"
 oc set volume dc/nationalparks --add --name=nationalparks-config --mount-path=$HOME/Infrastructure/templates/setup_dev/nationalparks.properties --configmap-name=nationalparks-config -n ${GUID}-parks-dev
 #are tags needed for dc?
+
+oc set probe dc/nationalparks --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
+oc set probe dc/nationalparks --readiness --failure-threshold 3 --initial-delay-seconds 20 --get-url=http://:8080/ws/healthz/
 
 sleep 5s;
 

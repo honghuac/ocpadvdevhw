@@ -21,7 +21,7 @@
 #            ParksMap (Green)
 #            ParksMap (Blue)
 
-    Make the Green service active initially to guarantee a Blue rollout upon the first pipeline run
+# Make the Green service active initially to guarantee a Blue rollout upon the first pipeline run
 
 
 if [ "$#" -ne 1 ]; then
@@ -32,62 +32,93 @@ fi
 
 GUID=$1
 echo "Setting up Parks Production Environment in project ${GUID}-parks-prod"
-oc new-app ${GUID}-parks-dev/mlbparks:0.0 --name=mlbparks-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
 
+#Add role
+
+oc policy add-role-to-group system:image-puller system:serviceaccounts:${GUID}-parks-prod -n ${GUID}-parks-prod
+oc policy add-role-to-user edit system:serviceaccount:hong-cicd:jenkins -n ${GUID}-parks-prod
+oc policy add-role-to-user view --serviceaccount=default -n ${GUID}-parks-prod
+
+#Create MongoDB headless service
+
+oc create -f "../templates/setup_dev/mongohlsvc.yaml" -n ${GUID}-parks-prod
 sleep 5s;
 
-oc expose dc mlbparks-blue --port 8080 -n ${GUID}-parks-prod
+#Create MongoDB service
 
+oc create -f "../templates/setup_dev/mongosvc.yaml" -n ${GUID}-parks-prod
 sleep 5s;
 
-oc new-app ${GUID}-parks-dev/mlbparks:0.0 --name=mlbparks-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+#Create MongoDB stateful set
 
+oc create -f "../templates/setup_dev/mongosfs.yaml" -n ${GUID}-parks-prod
 sleep 5s;
 
-oc expose dc mlbparks-green --port 8080 -n ${GUID}-parks-prod
 
-sleep 5s;
-
-oc expose svc/mlbparks-blue --name mlbparks -n ${GUID}-parks-prod
-
-sleep 5s;
-
-oc new-app ${GUID}-parks-dev/nationalparks:0.0 --name=nationalparks-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
-
-sleep 5s;
-
-oc expose dc nationalparks-blue --port 8080 -n ${GUID}-parks-prod
-
-sleep 5s;
-
-oc new-app ${GUID}-parks-dev/nationalparks:0.0 --name=nationalparks-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
-
-sleep 5s;
-
-oc expose dc nationalparks-green --port 8080 -n ${GUID}-parks-prod
-
-sleep 5s;
-
-oc expose svc/nationalparks-blue --name nationalparks -n ${GUID}-parks-prod
-
-sleep 5s;
+#Build ParksMap apps
 
 oc new-app ${GUID}-parks-dev/parksmap:0.0 --name=parksmap-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+sleep 5s;
+oc expose dc parksmap-blue --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-prod
 
+oc new-app ${GUID}-parks-prod/parksmap:0.0 --name=parksmap-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+sleep 5s;
+oc expose dc parksmap-green --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-prod
+
+oc delete configmap parksmap-blue-config -n ${GUID}-parks-prod --ignore-not-found=true
+oc create configmap parksmap-blue-config --from-file=$HOME/Infrastructure/templates/setup_prod/parksmap-blue.properties -n ${GUID}-parks-prod
+
+oc delete configmap parksmap-green-config -n ${GUID}-parks-prod --ignore-not-found=true
+oc create configmap parksmap-green-config --from-file=$HOME/Infrastructure/templates/setup_prod/parksmap-green.properties -n ${GUID}-parks-prod
+
+oc set volume dc/parksmap --add --name=parksmap-blue-config --configmap-name=parksmap-blue-config -n ${GUID}-parks-prod
 sleep 5s;
 
-oc expose dc parksmap-blue --port 8080 -n ${GUID}-parks-prod
-
+oc set volume dc/parksmap --add --name=parksmap-green-config --configmap-name=parksmap-green-config -n ${GUID}-parks-prod
 sleep 5s;
 
-oc new-app ${GUID}-parks-dev/parksmap:0.0 --name=parksmap-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
 
+#Build NationalParks apps
+
+oc new-app ${GUID}-parks-dev/nationalparks:0.0 --name=nationalparks-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+sleep 5s;
+oc expose dc nationalparks-blue --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-prod
+
+oc new-app ${GUID}-parks-prod/nationalparks:0.0 --name=nationalparks-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+sleep 5s;
+oc expose dc nationalparks-green --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-prod
+
+oc delete configmap nationalparks-blue-config -n ${GUID}-parks-prod --ignore-not-found=true
+oc create configmap nationalparks-blue-config --from-file=$HOME/Infrastructure/templates/setup_prod/nationalparks-blue.properties -n ${GUID}-parks-prod
+
+oc delete configmap nationalparks-green-config -n ${GUID}-parks-prod --ignore-not-found=true
+oc create configmap nationalparks-green-config --from-file=$HOME/Infrastructure/templates/setup_prod/nationalparks-green.properties -n ${GUID}-parks-prod
+
+oc set volume dc/nationalparks --add --name=nationalparks-blue-config --configmap-name=nationalparks-blue-config -n ${GUID}-parks-prod
 sleep 5s;
 
-oc expose dc parksmap-green --port 8080 -n ${GUID}-parks-prod
-
+oc set volume dc/nationalparks --add --name=nationalparks-green-config --configmap-name=nationalparks-green-config -n ${GUID}-parks-prod
 sleep 5s;
 
-oc expose svc/parksmap-blue --name parksmap -n ${GUID}-parks-prod
 
+#Build MLBParks apps
+
+oc new-app ${GUID}-parks-dev/mlbparks:0.0 --name=mlbparks-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+sleep 5s;
+oc expose dc mlbparks-blue --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-prod
+
+oc new-app ${GUID}-parks-prod/mlbparks:0.0 --name=mlbparks-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+sleep 5s;
+oc expose dc mlbparks-green --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-prod
+
+oc delete configmap mlbparks-blue-config -n ${GUID}-parks-prod --ignore-not-found=true
+oc create configmap mlbparks-blue-config --from-file=$HOME/Infrastructure/templates/setup_prod/mlbparks-blue.properties -n ${GUID}-parks-prod
+
+oc delete configmap mlbparks-green-config -n ${GUID}-parks-prod --ignore-not-found=true
+oc create configmap mlbparks-green-config --from-file=$HOME/Infrastructure/templates/setup_prod/mlbparks-green.properties -n ${GUID}-parks-prod
+
+oc set volume dc/mlbparks --add --name=mlbparks-blue-config --configmap-name=mlbparks-blue-config -n ${GUID}-parks-prod
+sleep 5s;
+
+oc set volume dc/mlbparks --add --name=mlbparks-green-config --configmap-name=mlbparks-green-config -n ${GUID}-parks-prod
 sleep 5s;
