@@ -1,4 +1,14 @@
 // Jenkinsfile for MLBParks
+
+//Build the source code, using Nexus as a Maven proxy cache
+//Execute the following tests in parallel and present the results in the build log:
+//Unit tests
+//Code coverage tests
+//Tag the image with the version and build number
+//Upload the generated artifact to the artifact repository
+//Run an integration test if the service built was a back-end service
+//Upload the tested container image to another (Nexus) Docker registry
+
 podTemplate(
   label: "skopeo-pod",
   cloud: "openshift",
@@ -20,7 +30,7 @@ podTemplate(
     // You need to build the application in directory `MLBParks`.
     // Also copy "../nexus_settings.xml" to your build directory
     // and replace 'GUID' in the file with your ${GUID} to point to >your< Nexus instance
- 
+
   }
 }
 
