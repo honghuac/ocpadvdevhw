@@ -46,48 +46,78 @@ oc create -f "../templates/setup_dev/mongosfs.yaml"
 
 sleep 5s;
 
-oc new-build --binary=true --name="mlbparks" jboss-eap70-openshift:1.7 -n ${GUID}-parks-dev
+#Add role
 
+oc policy add-role-to-user view --serviceaccount=default
+
+#Build ParksMap app
+
+oc new-build --binary=true --name="parksmap-binary" --image-stream=redhat-openjdk18-openshift:1.2 -n ${GUID}-parks-dev
 sleep 5s;
 
-oc new-app ${GUID}-parks-dev/mlbparks:0.0-0 --name=mlbparks --allow-missing-imagestream-tags=true -n ${GUID}-parks-dev
-
-sleep 5s;
-
-oc expose dc mlbparks --port 8080 -n ${GUID}-parks-dev
-
-sleep 5s;
-
-oc expose svc mlbparks -n ${GUID}-parks-dev
-
-sleep 5s;
-
-oc new-build --binary=true --name="nationalparks" redhat-openjdk18-openshift:1.2 -n ${GUID}-parks-dev
-
-sleep 5s;
-
-oc new-app ${GUID}-parks-dev/nationalparks:0.0-0 --name=nationalparks --allow-missing-imagestream-tags=true -n ${GUID}-parks-dev
-
-sleep 5s;
-
-oc expose dc nationalparks --port 8080 -n ${GUID}-parks-dev
-
-sleep 5s;
-
-oc expose svc nationalparks -n ${GUID}-parks-dev
-
-sleep 5s;
-
-oc new-build --binary=true --name="parksmap" redhat-openjdk18-openshift:1.2 -n ${GUID}-parks-dev
-
+oc start-build parksmap-binary --from-file=$HOME/ocpadvdevhw/ParksMap/target/parksmap.jar --follow -n ${GUID}-parks-dev
 sleep 5s;
 
 oc new-app ${GUID}-parks-dev/parksmap:0.0-0 --name=parksmap --allow-missing-imagestream-tags=true -n ${GUID}-parks-dev
+oc expose svc/parksmap-binary --labels='type=parksmap-backend'
 
+oc create configmap parksmap-config --from-literal="parksmap.properties=Placeholder" -n ${GUID}-parks-dev
+oc set volume dc/parksmap --add --name=parksmap-config --mount-path=$HOME/parksmap.properties --configmap-name=parksmap-config -n ${GUID}-parks-dev
+#are tags needed for dc?
 sleep 5s;
 
-oc expose dc parksmap --port 8080 -n ${GUID}-parks-dev
+#Test ParksMap app
 
+curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/parksmap -o template --template {{.spec.host}})"/ws/backends/list/"`
+curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/parksmap -o template --template {{.spec.host}})"/ws/appname/"`
+
+
+#Build MLBParks app
+
+oc new-build --binary=true --name="mlbparks-binary" --image-stream=jboss-eap70-openshift:1.7 -n ${GUID}-parks-dev
 sleep 5s;
 
-oc expose svc parksmap -n ${GUID}-parks-dev
+oc start-build parksmap-binary --from-file=$HOME/ocpadvdevhw/MLBParks/target/mlbparks.jar --follow -n ${GUID}-parks-dev
+sleep 5s;
+
+oc new-app ${GUID}-parks-dev/mlbparks:0.0-0 --name=mlbparks --allow-missing-imagestream-tags=true -n ${GUID}-parks-dev
+sleep 5s;
+
+#oc expose dc mlbparks --port 8080 -n ${GUID}-parks-dev ??
+
+oc expose svc mlbparks -n ${GUID}-parks-dev
+oc create configmap mlbparks-config --from-literal="mlbparks.properties=Placeholder" -n ${GUID}-parks-dev
+oc set volume dc/mlbparks --add --name=mlbparks-config --mount-path=$HOME/mlbparks.properties --configmap-name=mlbparks-config -n ${GUID}-parks-dev
+#are tags needed for dc?
+sleep 5s;
+
+#Test MLBParks app
+
+curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/mlbparks -o template --template {{.spec.host}})"/ws/healthz/"`
+curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/mlbparks -o template --template {{.spec.host}})"/ws/data/load/"`
+curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/mlbparks -o template --template {{.spec.host}})"/ws/info/"`
+
+
+#Build NationalParks app
+oc new-build --binary=true --name="nationalparks" --image-stream=redhat-openjdk18-openshift:1.2 -n ${GUID}-parks-dev
+sleep 5s;
+
+oc start-build nationalparks-binary --from-file=$HOME/ocpadvdevhw/NationalParks/target/nationalparks.jar --follow -n ${GUID}-parks-dev
+sleep 5s;
+
+oc new-app ${GUID}-parks-dev/nationalparks:0.0-0 --name=nationalparks --allow-missing-imagestream-tags=true -n ${GUID}-parks-dev
+sleep 5s;
+
+#oc expose dc nationalparks --port 8080 -n ${GUID}-parks-dev ??
+
+oc expose svc nationalparks -n ${GUID}-parks-dev
+oc create configmap nationalparks-config --from-literal="nationalparks.properties=Placeholder"
+oc set volume dc/nationalparks --add --name=nationalparks-config --mount-path=$HOME/nationalparks.properties --configmap-name=nationalparks-config -n ${GUID}-parks-dev
+#are tags needed for dc?
+sleep 5s;
+
+#Test NationalParks app
+
+curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/nationalparks -o template --template {{.spec.host}})"/ws/healthz/"`
+curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/nationalparks -o template --template {{.spec.host}})"/ws/data/load/"`
+curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/nationalparks -o template --template {{.spec.host}})"/ws/info/"`
