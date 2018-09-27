@@ -15,23 +15,22 @@
 #CLUSTER: The cluster base URL—for example, na39.openshift.opentlc.com
 
 
-if [ "$#" -ne 3 ]; then
+if [ "$#" -ne 2 ]; then
     echo "Usage:"
     echo "  $0 GUID CLUSTER USER"
     echo "  Example: $0 wkha na39.openshift.opentlc.com wkha-redhat.com"
     exit 1
 fi
 
-GUID=$1
-CLUSTER=$2
-USER=$3
-echo "Setting up Jenkins in project ${GUID}-jenkins for Cluster ${CLUSTER} for user ${USER}"
+CLUSTER=$1
+USER=$2
+echo "Setting up Jenkins in project grading-jenkins for Cluster ${CLUSTER} for user ${USER}"
 
 #Create new Grading Jenkins project and assign roles
-oc new-project ${GUID}-jenkins --display-name="${GUID} AdvDev Homework Grading Jenkins"
-oc policy add-role-to-user admin ${USER} -n ${GUID}-jenkins
-oc annotate namespace ${GUID}-jenkins openshift.io/requester=${USER} --overwrite
-oc adm policy add-cluster-role-to-user self-provisioner system:serviceaccount:${GUID}-jenkins:jenkins
+oc new-project grading-jenkins --display-name="AdvDev Homework Grading Jenkins"
+oc policy add-role-to-user admin ${USER} -n grading-jenkins
+oc annotate namespace grading-jenkins openshift.io/requester=${USER} --overwrite
+oc adm policy add-cluster-role-to-user self-provisioner system:serviceaccount:grading-jenkins:jenkins
 
 #a. Create Jenkins app - without correct imagestream
 oc new-app jenkins-persistent --param ENABLE_OAUTH=true --param MEMORY_LIMIT=2Gi --param VOLUME_CAPACITY=4Gi --param DISABLE_ADMINISTRATIVE_MONITORS=true -n ${GUID}-jenkins
@@ -46,7 +45,7 @@ sudo systemctl start docker
 wget https://raw.githubusercontent.com/honghuac/ocpadvdevhw/master/Infrastructure/templates/setup_jenkins/Dockerfile
 
 #c. Build, Tag, Push Docker image
-sudo docker build . -t docker-registry-default.apps.${GUID}.openshift.opentlc.com/${GUID}-jenkins/jenkins-slave-maven-appdev:v3.10
+sudo docker build . -t docker-registry-default.apps.${CLUSTER}.openshift.opentlc.com/grading-jenkins/jenkins-slave-maven-appdev:v3.10
 sleep 20s;
-sudo docker login -u opentlc-mgr -p $(oc whoami -t) docker-registry-default.apps.${GUID}.openshift.opentlc.com
-sudo docker push docker-registry-default.apps.$GUID.openshift.opentlc.com/${GUID}-jenkins/jenkins-slave-maven-appdev:v3.10
+sudo docker login -u opentlc-mgr -p $(oc whoami -t) docker-registry-default.apps.${CLUSTER}.openshift.opentlc.com
+sudo docker push docker-registry-default.apps.${CLUSTER}.openshift.opentlc.com/grading-jenkins/jenkins-slave-maven-appdev:v3.10

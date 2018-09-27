@@ -53,22 +53,22 @@ wget https://raw.githubusercontent.com/honghuac/ocpadvdevhw/master/Infrastructur
 
 
 #c. Build, Tag, Push Docker image
-sudo docker build . -t docker-registry-default.apps.${GUID}.openshift.opentlc.com/${GUID}-jenkins/jenkins-slave-maven-appdev:v3.10
+sudo docker build . -t docker-registry-default.apps.${CLUSTER}.openshift.opentlc.com/${GUID}-jenkins/jenkins-slave-maven-appdev:v3.10
 sleep 20s;
-sudo docker login -u opentlc-mgr -p $(oc whoami -t) docker-registry-default.apps.${GUID}.openshift.opentlc.com
-sudo docker push docker-registry-default.apps.$GUID.openshift.opentlc.com/${GUID}-jenkins/jenkins-slave-maven-appdev:v3.10
+sudo docker login -u opentlc-mgr -p $(oc whoami -t) docker-registry-default.apps.${CLUSTER}.openshift.opentlc.com
+sudo docker push docker-registry-default.apps.${CLUSTER}.openshift.opentlc.com/${GUID}-jenkins/jenkins-slave-maven-appdev:v3.10
 sleep 20s;
 
 #d. Create build config for 3 Jenkin Pipeline apps
-wget https://raw.githubusercontent.com/honghuac/ocpadvdevhw/master/Infrastructure/templates/setup_jenkins/mlbparks-pipeline.yaml
-wget https://raw.githubusercontent.com/honghuac/ocpadvdevhw/master/Infrastructure/templates/setup_jenkins/nationalparks-pipeline.yaml
-wget https://raw.githubusercontent.com/honghuac/ocpadvdevhw/master/Infrastructure/templates/setup_jenkins/parksmap-pipeline.yaml
+wget ${REPO}/mlbparks-pipeline.yaml
+wget ${REPO}/nationalparks-pipeline.yaml
+wget ${REPO}/parksmap-pipeline.yaml
 
-oc create -f $HOME/infrastructure/templates/setup_jenkins/mlbparks-pipeline.yaml
+oc create -f ./mlbparks-pipeline.yaml
 sleep 5s;
 
-oc create -f $HOME/infrastructure/templates/setup_jenkins/nationalparks-pipeline.yaml
+oc create -f ./nationalparks-pipeline.yaml
 sleep 5s;
 
-oc create -f $HOME/infrastructure/templates/setup_jenkins/parksmap-pipeline.yaml
+oc create -f ./parksmap-pipeline.yaml
 sleep 5s;
