@@ -30,7 +30,7 @@ oc patch dc nexus3 --patch='{ "spec": { "strategy": { "type": "Recreate" }}}' -n
 
 oc set resources dc nexus3 --limits=memory=2Gi --requests=memory=1Gi -n $GUID-nexus
 
-oc create -f ".Infrastructure/templates/setup_nexus/nexus.yaml" -n $GUID-nexus
+oc create -f "./Infrastructure/templates/setup_nexus/nexus.yaml" -n $GUID-nexus
 
 sleep 5s;
 
@@ -46,7 +46,7 @@ sleep 5s;
 
 curl -o setup_nexus3.sh -s https://raw.githubusercontent.com/wkulhanek/ocp_advanced_development_resources/master/nexus/setup_nexus3.sh -n $GUID-nexus
 
-chmod +x setup_nexus3.sh -n $GUID-nexus
+chmod +x setup_nexus3.sh
 
 ./setup_nexus3.sh admin admin123 http://$(oc get route nexus3 --template='{{ .spec.host }}') -n $GUID-nexus
 
