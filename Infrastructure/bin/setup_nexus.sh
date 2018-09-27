@@ -16,9 +16,9 @@ GUID=$1
 echo "Setting up Nexus in project $GUID-nexus"
 oc new-app sonatype/nexus3:latest -n $GUID-nexus
 
-sleep 5s;
+sleep 15s;
 
-oc expose svc nexus3
+oc expose svc/nexus3
 
 sleep 5s;
 
