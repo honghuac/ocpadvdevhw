@@ -60,15 +60,15 @@ sudo docker push docker-registry-default.apps.${CLUSTER}.openshift.opentlc.com/$
 sleep 20s;
 
 #d. Create build config for 3 Jenkin Pipeline apps
-wget ${REPO}/mlbparks-pipeline.yaml
-wget ${REPO}/nationalparks-pipeline.yaml
-wget ${REPO}/parksmap-pipeline.yaml
+#wget ${REPO}/mlbparks-pipeline.yaml
+#wget ${REPO}/nationalparks-pipeline.yaml
+#wget ${REPO}/parksmap-pipeline.yaml
 
-oc create -f ./mlbparks-pipeline.yaml
+oc create -f "./Infrastructure/templates/setup_jenkins/mlbparks-pipeline.yaml"
 sleep 5s;
 
-oc create -f ./nationalparks-pipeline.yaml
+oc create -f "./Infrastructure/templates/setup_jenkins/nationalparks-pipeline.yaml"
 sleep 5s;
 
-oc create -f ./parksmap-pipeline.yaml
+oc create -f "./Infrastructure/templates/setup_jenkins/parksmap-pipeline.yaml"
 sleep 5s;

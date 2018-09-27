@@ -1,4 +1,4 @@
-echo "apiVersion: v1
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: nexus-pvc
@@ -7,4 +7,4 @@ spec:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 4Gi" | 
+      storage: 4Gi

@@ -41,17 +41,17 @@ oc policy add-role-to-user view --serviceaccount=default -n ${GUID}-parks-prod
 
 #Create MongoDB headless service
 
-oc create -f "../templates/setup_dev/mongohlsvc.yaml" -n ${GUID}-parks-prod
+oc create -f ".Infrastructure/templates/setup_dev/mongohlsvc.yaml" -n ${GUID}-parks-prod
 sleep 5s;
 
 #Create MongoDB service
 
-oc create -f "../templates/setup_dev/mongosvc.yaml" -n ${GUID}-parks-prod
+oc create -f ".Infrastructure/templates/setup_dev/mongosvc.yaml" -n ${GUID}-parks-prod
 sleep 5s;
 
 #Create MongoDB stateful set
 
-oc create -f "../templates/setup_dev/mongosfs.yaml" -n ${GUID}-parks-prod
+oc create -f ".Infrastructure/templates/setup_dev/mongosfs.yaml" -n ${GUID}-parks-prod
 sleep 5s;
 
 
@@ -112,10 +112,10 @@ sleep 5s;
 oc expose dc mlbparks-green --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-prod
 
 oc delete configmap mlbparks-blue-config -n ${GUID}-parks-prod --ignore-not-found=true
-oc create configmap mlbparks-blue-config --from-file=$HOME/Infrastructure/templates/setup_prod/mlbparks-blue.properties -n ${GUID}-parks-prod
+oc create configmap mlbparks-blue-config --from-file=./Infrastructure/templates/setup_prod/mlbparks-blue.properties -n ${GUID}-parks-prod
 
 oc delete configmap mlbparks-green-config -n ${GUID}-parks-prod --ignore-not-found=true
-oc create configmap mlbparks-green-config --from-file=$HOME/Infrastructure/templates/setup_prod/mlbparks-green.properties -n ${GUID}-parks-prod
+oc create configmap mlbparks-green-config --from-file=./Infrastructure/templates/setup_prod/mlbparks-green.properties -n ${GUID}-parks-prod
 
 oc set volume dc/mlbparks --add --name=mlbparks-blue-config --configmap-name=mlbparks-blue-config -n ${GUID}-parks-prod
 sleep 5s;

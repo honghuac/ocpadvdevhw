@@ -30,19 +30,19 @@ oc project ${GUID}-parks-dev
 
 #Create MongoDB headless service
 
-oc create -f "../templates/setup_dev/mongohlsvc.yaml" -n ${GUID}-parks-dev
+oc create -f ".Infrastructure/templates/setup_dev/mongohlsvc.yaml" -n ${GUID}-parks-dev
 
 sleep 5s;
 
 #Create MongoDB service
 
-oc create -f "../templates/setup_dev/mongosvc.yaml" -n ${GUID}-parks-dev
+oc create -f ".Infrastructure/templates/setup_dev/mongosvc.yaml" -n ${GUID}-parks-dev
 
 sleep 5s;
 
 #Create MongoDB stateful set
 
-oc create -f "../templates/setup_dev/mongosfs.yaml" -n ${GUID}-parks-dev
+oc create -f ".Infrastructure/templates/setup_dev/mongosfs.yaml" -n ${GUID}-parks-dev
 
 sleep 5s;
 
@@ -55,7 +55,7 @@ oc policy add-role-to-user view --serviceaccount=default -n ${GUID}-parks-dev
 oc new-build --binary=true --name="parksmap-binary" --image-stream=redhat-openjdk18-openshift:1.2 -n ${GUID}-parks-dev
 sleep 5s;
 
-oc start-build parksmap-binary --from-file=$HOME/ocpadvdevhw/ParksMap/target/parksmap.jar --follow -n ${GUID}-parks-dev
+oc start-build parksmap-binary --from-file=./ParksMap/target/parksmap.jar --follow -n ${GUID}-parks-dev
 sleep 5s;
 
 oc new-app ${GUID}-parks-dev/parksmap:0.0-0 --name=parksmap --allow-missing-imagestream-tags=true -n ${GUID}-parks-dev
@@ -64,10 +64,10 @@ sleep 5s;
 oc expose svc parksmap --port 8080 --labels='type=parksmap-backend'
 
 oc delete configmap parksmap-config -n ${GUID}-parks-dev --ignore-not-found=true
-oc create configmap parksmap-config --from-file=$HOME/Infrastructure/templates/setup_dev/parksmap.properties -n ${GUID}-parks-dev
+oc create configmap parksmap-config --from-file=./Infrastructure/templates/setup_dev/parksmap.properties -n ${GUID}-parks-dev
 
 #oc create configmap parksmap-config --from-literal="parksmap.properties=Placeholder" -n ${GUID}-parks-dev
-oc set volume dc/parksmap --add --name=parksmap-config --mount-path=$HOME/Infrastructure/templates/setup_dev/parksmap.properties --configmap-name=parksmap-config -n ${GUID}-parks-dev
+oc set volume dc/parksmap --add --name=parksmap-config --mount-path=./Infrastructure/templates/setup_dev/parksmap.properties --configmap-name=parksmap-config -n ${GUID}-parks-dev
 #are tags needed for dc?
 sleep 5s;
 
@@ -86,7 +86,7 @@ oc set probe dc/parksmap --readiness --failure-threshold 3 --initial-delay-secon
 oc new-build --binary=true --name="mlbparks-binary" --image-stream=jboss-eap70-openshift:1.7 -n ${GUID}-parks-dev
 sleep 5s;
 
-oc start-build mlbparks-binary --from-file=$HOME/ocpadvdevhw/MLBParks/target/mlbparks.jar --follow -n ${GUID}-parks-dev
+oc start-build mlbparks-binary --from-file=./MLBParks/target/mlbparks.war --follow -n ${GUID}-parks-dev
 sleep 5s;
 
 oc new-app ${GUID}-parks-dev/mlbparks:0.0-0 --name=mlbparks --allow-missing-imagestream-tags=true -n ${GUID}-parks-dev
@@ -95,10 +95,10 @@ sleep 5s;
 oc expose svc mlbparks --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-dev
 
 oc delete configmap mlbparks-config -n ${GUID}-parks-dev --ignore-not-found=true
-oc create configmap mlbparks-config --from-file=$HOME/Infrastructure/templates/setup_dev/mlbparks.properties -n ${GUID}-parks-dev
+oc create configmap mlbparks-config --from-file=./Infrastructure/templates/setup_dev/mlbparks.properties -n ${GUID}-parks-dev
 
 #oc create configmap mlbparks-config --from-literal="mlbparks.properties=Placeholder" -n ${GUID}-parks-dev
-oc set volume dc/mlbparks --add --name=mlbparks-config --mount-path=$HOME/Infrastructure/templates/setup_dev/mlbparks.properties --configmap-name=mlbparks-config -n ${GUID}-parks-dev
+oc set volume dc/mlbparks --add --name=mlbparks-config --mount-path=./Infrastructure/templates/setup_dev/mlbparks.properties --configmap-name=mlbparks-config -n ${GUID}-parks-dev
 #are tags needed for dc?
 sleep 5s;
 
@@ -117,7 +117,7 @@ oc set probe dc/mlbparks --readiness --failure-threshold 3 --initial-delay-secon
 oc new-build --binary=true --name="nationalparks" --image-stream=redhat-openjdk18-openshift:1.2 -n ${GUID}-parks-dev
 sleep 5s;
 
-oc start-build nationalparks-binary --from-file=$HOME/ocpadvdevhw/NationalParks/target/nationalparks.jar --follow -n ${GUID}-parks-dev
+oc start-build nationalparks-binary --from-file=./NationalParks/target/nationalparks.jar --follow -n ${GUID}-parks-dev
 sleep 5s;
 
 oc new-app ${GUID}-parks-dev/nationalparks:0.0-0 --name=nationalparks --allow-missing-imagestream-tags=true -n ${GUID}-parks-dev
@@ -126,10 +126,10 @@ sleep 5s;
 oc expose svc nationalparks --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-dev
 
 oc delete configmap nationalparks-config -n ${GUID}-parks-dev --ignore-not-found=true
-oc create configmap nationalparks-config --from-file=$HOME/Infrastructure/templates/setup_dev/nationalparks.properties -n ${GUID}-parks-dev
+oc create configmap nationalparks-config --from-file=./Infrastructure/templates/setup_dev/nationalparks.properties -n ${GUID}-parks-dev
 
 #oc create configmap nationalparks-config --from-literal="nationalparks.properties=Placeholder"
-oc set volume dc/nationalparks --add --name=nationalparks-config --mount-path=$HOME/Infrastructure/templates/setup_dev/nationalparks.properties --configmap-name=nationalparks-config -n ${GUID}-parks-dev
+oc set volume dc/nationalparks --add --name=nationalparks-config --mount-path=./Infrastructure/templates/setup_dev/nationalparks.properties --configmap-name=nationalparks-config -n ${GUID}-parks-dev
 #are tags needed for dc?
 
 oc set probe dc/nationalparks --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
