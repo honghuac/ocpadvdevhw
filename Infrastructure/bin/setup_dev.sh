@@ -102,8 +102,8 @@ oc set volume dc/mlbparks --add --name=mlbparks-config --mount-path=./Infrastruc
 #are tags needed for dc?
 sleep 5s;
 
-oc set probe dc/mlbparks --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
-oc set probe dc/mlbparks --readiness --failure-threshold 3 --initial-delay-seconds 20 --get-url=http://:8080/ws/healthz/
+oc set probe dc/mlbparks --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok -n ${GUID}-parks-dev
+oc set probe dc/mlbparks --readiness --failure-threshold 3 --initial-delay-seconds 20 --get-url=http://:8080/ws/healthz/ -n ${GUID}-parks-dev
 
 
 #Test MLBParks app
@@ -132,8 +132,8 @@ oc create configmap nationalparks-config --from-file=./Infrastructure/templates/
 oc set volume dc/nationalparks --add --name=nationalparks-config --mount-path=./Infrastructure/templates/setup_dev/nationalparks.properties --configmap-name=nationalparks-config -n ${GUID}-parks-dev
 #are tags needed for dc?
 
-oc set probe dc/nationalparks --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
-oc set probe dc/nationalparks --readiness --failure-threshold 3 --initial-delay-seconds 20 --get-url=http://:8080/ws/healthz/
+oc set probe dc/nationalparks --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok -n ${GUID}-parks-dev
+oc set probe dc/nationalparks --readiness --failure-threshold 3 --initial-delay-seconds 20 --get-url=http://:8080/ws/healthz/ -n ${GUID}-parks-dev
 
 sleep 5s;
 
