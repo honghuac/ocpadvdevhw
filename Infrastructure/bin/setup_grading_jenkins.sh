@@ -15,17 +15,17 @@
 #CLUSTER: The cluster base URL—for example, na39.openshift.opentlc.com
 
 
-if [ "$#" -ne 2 ]; then
+if [ "$#" -ne 3 ]; then
     echo "Usage:"
     echo "  $0 GUID CLUSTER USER"
-    echo "  Example: $0 wkha na39.openshift.opentlc.com"
+    echo "  Example: $0 wkha na39.openshift.opentlc.com wkha-redhat.com"
     exit 1
 fi
 
 GUID=$1
 CLUSTER=$2
 USER=$3
-echo "Setting up Jenkins in project ${GUID}-jenkins for Cluster ${CLUSTER}"
+echo "Setting up Jenkins in project ${GUID}-jenkins for Cluster ${CLUSTER} for user ${USER}"
 
 #Create new Grading Jenkins project and assign roles
 oc new-project ${GUID}-jenkins --display-name="${GUID} AdvDev Homework Grading Jenkins"
