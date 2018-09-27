@@ -31,7 +31,7 @@ sleep 5s;
 
 oc expose service sonarqube
 
-oc create -f "../templates/setup_sonar/sonarqube.yaml"
+oc create -f ".Infrastructure/templates/setup_sonar/sonarqube.yaml"
 sleep 5s;
 
 oc set volume dc/sonarqube --add --overwrite --name=sonarqube-volume-1 --mount-path=/opt/sonarqube/data/ --type persistentVolumeClaim --claim-name=sonarqube-pvc

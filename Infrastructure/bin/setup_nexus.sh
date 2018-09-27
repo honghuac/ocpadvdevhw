@@ -30,16 +30,7 @@ oc patch dc nexus3 --patch='{ "spec": { "strategy": { "type": "Recreate" }}}'
 
 oc set resources dc nexus3 --limits=memory=2Gi --requests=memory=1Gi
 
-echo "apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: nexus-pvc
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 4Gi" | oc create -f -
+oc create -f ".Infrastructure/templates/setup_nexus/nexus.yaml"
 
 sleep 5s;
 
@@ -59,10 +50,10 @@ chmod +x setup_nexus3.sh
 
 ./setup_nexus3.sh admin admin123 http://$(oc get route nexus3 --template='{{ .spec.host }}')
 
+sleep 5s;
+
 rm setup_nexus3.sh
 
 oc expose dc nexus3 --port=5000 --name=nexus-registry
-
-sleep 5s;
 
 oc create route edge nexus-registry --service=nexus-registry --port=5000
