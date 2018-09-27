@@ -30,7 +30,7 @@ echo "Setting up Jenkins in project ${GUID}-jenkins for Cluster ${CLUSTER} for u
 #Create new Grading Jenkins project and assign roles
 oc new-project ${GUID}-jenkins --display-name="${GUID} AdvDev Homework Grading Jenkins"
 oc policy add-role-to-user admin ${USER} -n ${GUID}-jenkins
-oc annotate namespace ${GUID}-nexus      openshift.io/requester=${USER} --overwrite
+oc annotate namespace ${GUID}-jenkins openshift.io/requester=${USER} --overwrite
 oc adm policy add-cluster-role-to-user self-provisioner system:serviceaccount:${GUID}-jenkins:jenkins
 
 #a. Create Jenkins app - without correct imagestream
