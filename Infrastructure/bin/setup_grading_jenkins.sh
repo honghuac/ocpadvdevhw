@@ -40,13 +40,13 @@ sleep 5s;
 #b. Download Docker registries config and Dockerfile for Docker image containing CentOS
 #wget Dockerfile to $HOME/infrastructure/templates/Dockerfile ?
 #wget registries.conf and override /etc/containers/registries.conf ?
-sudo -i
-systemctl enable docker
-systemctl start docker
-cd $HOME/infrastructure/templates/
+#sudo -i
+sudo systemctl enable docker
+sudo systemctl start docker
+wget https://raw.githubusercontent.com/honghuac/ocpadvdevhw/master/Infrastructure/templates/setup_jenkins/Dockerfile
 
 #c. Build, Tag, Push Docker image
-docker build . -t docker-registry-default.apps.${GUID}.openshift.opentlc.com/${GUID}-jenkins/jenkins-slave-maven-appdev:v3.10
+sudo docker build . -t docker-registry-default.apps.${GUID}.openshift.opentlc.com/${GUID}-jenkins/jenkins-slave-maven-appdev:v3.10
 sleep 20s;
-docker login -u opentlc-mgr -p $(oc whoami -t) docker-registry-default.apps.${GUID}.openshift.opentlc.com
-docker push docker-registry-default.apps.$GUID.openshift.opentlc.com/${GUID}-jenkins/jenkins-slave-maven-appdev:v3.10
+sudo docker login -u opentlc-mgr -p $(oc whoami -t) docker-registry-default.apps.${GUID}.openshift.opentlc.com
+sudo docker push docker-registry-default.apps.$GUID.openshift.opentlc.com/${GUID}-jenkins/jenkins-slave-maven-appdev:v3.10
