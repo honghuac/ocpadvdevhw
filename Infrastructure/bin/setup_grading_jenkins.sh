@@ -15,16 +15,23 @@
 #CLUSTER: The cluster base URL—for example, na39.openshift.opentlc.com
 
 
-if [ "$#" -ne 3 ]; then
+if [ "$#" -ne 2 ]; then
     echo "Usage:"
-    echo "  $0 GUID CLUSTER"
+    echo "  $0 GUID CLUSTER USER"
     echo "  Example: $0 wkha na39.openshift.opentlc.com"
     exit 1
 fi
 
 GUID=$1
 CLUSTER=$2
-echo "Setting up Jenkins in project ${GUID}-jenkins from Git Repo ${REPO} for Cluster ${CLUSTER}"
+USER=$3
+echo "Setting up Jenkins in project ${GUID}-jenkins for Cluster ${CLUSTER}"
+
+#Create new Grading Jenkins project and assign roles
+oc new-project ${GUID}-jenkins --display-name="${GUID} AdvDev Homework Grading Jenkins"
+oc policy add-role-to-user admin ${USER} -n ${GUID}-jenkins
+oc annotate namespace ${GUID}-nexus      openshift.io/requester=${USER} --overwrite
+oc adm policy add-cluster-role-to-user self-provisioner system:serviceaccount:${GUID}-jenkins:jenkins
 
 #a. Create Jenkins app - without correct imagestream
 oc new-app jenkins-persistent --param ENABLE_OAUTH=true --param MEMORY_LIMIT=2Gi --param VOLUME_CAPACITY=4Gi --param DISABLE_ADMINISTRATIVE_MONITORS=true -n ${GUID}-jenkins
