@@ -44,7 +44,8 @@ oc rollout resume dc nexus3 -n $GUID-nexus
 
 sleep 5s;
 
-curl -o setup_nexus3.sh -s https://raw.githubusercontent.com/wkulhanek/ocp_advanced_development_resources/master/nexus/setup_nexus3.sh -n $GUID-nexus
+curl -o setup_nexus3.sh -s https://raw.githubusercontent.com/wkulhanek/ocp_advanced_development_resources/master/nexus/setup_nexus3.sh
+#wget https://raw.githubusercontent.com/wkulhanek/ocp_advanced_development_resources/master/nexus/setup_nexus3.sh
 
 chmod +x setup_nexus3.sh
 
