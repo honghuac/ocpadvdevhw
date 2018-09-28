@@ -1,18 +1,10 @@
 apiVersion: build.openshift.io/v1
 kind: BuildConfig
 metadata:
-  annotations:
-    openshift.io/generated-by: OpenShiftNewBuild
-  creationTimestamp: 2018-09-28T06:54:30Z
   labels:
     build: maven-slave
   name: maven-slave
-  namespace: test
-  resourceVersion: "821255"
-  selfLink: /apis/build.openshift.io/v1/namespaces/test/buildconfigs/maven-slave
-  uid: 59088371-c2eb-11e8-b4a4-021ca222e336
 spec:
-  failedBuildsHistoryLimit: 5
   nodeSelector: null
   output:
     to:
