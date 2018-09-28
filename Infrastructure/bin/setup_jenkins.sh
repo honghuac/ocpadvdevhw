@@ -44,17 +44,11 @@ oc new-app jenkins-persistent --param ENABLE_OAUTH=true --param MEMORY_LIMIT=2Gi
 sleep 5s;
 
 #b. Build Maven Slave pod containing Skopeo
-oc create -f "./Infrastructure/templates/setup_jenkins/maven-slave.yaml" -n ${GUID}-jenkins
+oc new-build openshift/jenkins-slave-maven-centos7:v3.10 --allow-missing-images --dockerfile=$'FROM docker.io/openshift/jenkins-slave-maven-centos7:v3.10\nUSER root\nRUN yum -y install skopeo apb && yum clean all\nUSER 1001'
 sleep 5s;
 
-oc new-build --binary=true --name="maven-slave" -n ${GUID}-jenkins
+#oc new-app ${GUID}-jenkins/jenkins-slave-maven-centos7 --allow-missing-imagestream-tags=true -n ${GUID}-jenkins
 #sleep 5s;
-
-oc start-build maven-slave --follow -n ${GUID}-jenkins
-sleep 5s;
-
-oc new-app ${GUID}-jenkins/maven-slave --allow-missing-imagestream-tags=true -n ${GUID}-jenkins
-sleep 5s;
 
 #c. Create 3 Jenkin Pipeline apps
 #wget ${REPO}/mlbparks-pipeline.yaml
