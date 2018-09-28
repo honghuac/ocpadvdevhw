@@ -47,13 +47,13 @@ sleep 5s;
 oc create -f "./Infrastructure/templates/setup_jenkins/maven-slave.yaml" -n ${GUID}-jenkins
 sleep 5s;
 
-#oc new-build --binary=true --name="mavenslave" -n ${GUID}-jenkins
+oc new-build --binary=true --name="maven-slave" -n ${GUID}-jenkins
 #sleep 5s;
 
-oc start-build mavenslave --follow -n ${GUID}-jenkins
+oc start-build maven-slave --follow -n ${GUID}-jenkins
 sleep 5s;
 
-oc new-app ${GUID}-jenkins/mavenslave --allow-missing-imagestream-tags=true -n ${GUID}-jenkins
+oc new-app ${GUID}-jenkins/maven-slave --allow-missing-imagestream-tags=true -n ${GUID}-jenkins
 sleep 5s;
 
 #c. Create 3 Jenkin Pipeline apps
