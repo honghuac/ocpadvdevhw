@@ -47,16 +47,16 @@ sleep 5s;
 #wget Dockerfile to $HOME/infrastructure/templates/Dockerfile ?
 #wget registries.conf and override /etc/containers/registries.conf ?
 #sudo -i
-sudo systemctl enable docker
-sudo systemctl start docker
+#systemctl enable docker
+#systemctl start docker
 wget https://raw.githubusercontent.com/honghuac/ocpadvdevhw/master/Infrastructure/templates/setup_jenkins/Dockerfile
 
 
 #c. Build, Tag, Push Docker image
-sudo docker build . -t docker-registry-default.apps.${CLUSTER}.openshift.opentlc.com/${GUID}-jenkins/jenkins-slave-maven-appdev:v3.10
+docker build . -t docker-registry-default.apps.${CLUSTER}.openshift.opentlc.com/${GUID}-jenkins/jenkins-slave-maven-appdev:v3.10
 sleep 20s;
-sudo docker login -u opentlc-mgr -p $(oc whoami -t) docker-registry-default.apps.${CLUSTER}.openshift.opentlc.com
-sudo docker push docker-registry-default.apps.${CLUSTER}.openshift.opentlc.com/${GUID}-jenkins/jenkins-slave-maven-appdev:v3.10
+docker login -u opentlc-mgr -p $(oc whoami -t) docker-registry-default.apps.${CLUSTER}.openshift.opentlc.com
+docker push docker-registry-default.apps.${CLUSTER}.openshift.opentlc.com/${GUID}-jenkins/jenkins-slave-maven-appdev:v3.10
 sleep 20s;
 
 #d. Create 3 Jenkin Pipeline apps
