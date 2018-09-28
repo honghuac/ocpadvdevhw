@@ -43,33 +43,31 @@ echo "Setting up Jenkins in project ${GUID}-jenkins from Git Repo ${REPO} for Cl
 oc new-app jenkins-persistent --param ENABLE_OAUTH=true --param MEMORY_LIMIT=2Gi --param VOLUME_CAPACITY=4Gi --param DISABLE_ADMINISTRATIVE_MONITORS=true -n ${GUID}-jenkins
 sleep 5s;
 
-#b. Download Docker registries config and Dockerfile for Docker image containing CentOS
-#wget Dockerfile to $HOME/infrastructure/templates/Dockerfile ?
-#wget registries.conf and override /etc/containers/registries.conf ?
-#sudo -i
-#systemctl enable docker
-#systemctl start docker
-wget https://raw.githubusercontent.com/honghuac/ocpadvdevhw/master/Infrastructure/templates/setup_jenkins/Dockerfile
+#b. Build Maven Slave pod containing Skopeo
+oc create -f "./Infrastructure/templates/setup_jenkins/maven-slave.yaml" -n ${GUID}-jenkins
+sleep 5s;
 
+#oc new-build --binary=true --name="mavenslave" -n ${GUID}-jenkins
+#sleep 5s;
 
-#c. Build, Tag, Push Docker image
-docker build . -t docker-registry-default.apps.${CLUSTER}.openshift.opentlc.com/${GUID}-jenkins/jenkins-slave-maven-appdev:v3.10
-sleep 20s;
-docker login -u opentlc-mgr -p $(oc whoami -t) docker-registry-default.apps.${CLUSTER}.openshift.opentlc.com
-docker push docker-registry-default.apps.${CLUSTER}.openshift.opentlc.com/${GUID}-jenkins/jenkins-slave-maven-appdev:v3.10
-sleep 20s;
+oc start-build mavenslave --follow -n ${GUID}-jenkins
+sleep 5s;
 
-#d. Create 3 Jenkin Pipeline apps
+oc new-app ${GUID}-jenkins/mavenslave --allow-missing-imagestream-tags=true -n ${GUID}-jenkins
+sleep 5s;
+
+#c. Create 3 Jenkin Pipeline apps
 #wget ${REPO}/mlbparks-pipeline.yaml
 #wget ${REPO}/nationalparks-pipeline.yaml
 #wget ${REPO}/parksmap-pipeline.yaml
+
 
 #build mlbparks pipeline
 oc create -f "./Infrastructure/templates/setup_jenkins/mlbparks-pipeline.yaml" -n ${GUID}-jenkins
 sleep 5s;
 
-oc new-build --binary=true --name="mlbparks-pipeline" -n ${GUID}-jenkins
-sleep 5s;
+#oc new-build --binary=true --name="mlbparks-pipeline" -n ${GUID}-jenkins
+#sleep 5s;
 
 oc start-build mlbparks-pipeline --follow -n ${GUID}-jenkins
 sleep 5s;
@@ -77,12 +75,13 @@ sleep 5s;
 oc new-app ${GUID}-jenkins/mlbparks-pipeline --allow-missing-imagestream-tags=true -n ${GUID}-jenkins
 sleep 5s;
 
+
 #build nationalparks pipeline
 oc create -f "./Infrastructure/templates/setup_jenkins/nationalparks-pipeline.yaml" -n ${GUID}-jenkins
 sleep 5s;
 
-oc new-build --binary=true --name="nationalparks-pipeline" -n ${GUID}-jenkins
-sleep 5s;
+#oc new-build --binary=true --name="nationalparks-pipeline" -n ${GUID}-jenkins
+#sleep 5s;
 
 oc start-build nationalparks-pipeline --follow -n ${GUID}-jenkins
 sleep 5s;
@@ -95,8 +94,8 @@ sleep 5s;
 oc create -f "./Infrastructure/templates/setup_jenkins/parksmap-pipeline.yaml" -n ${GUID}-jenkins
 sleep 5s;
 
-oc new-build --binary=true --name="parksmap-pipeline" -n ${GUID}-jenkins
-sleep 5s;
+#oc new-build --binary=true --name="parksmap-pipeline" -n ${GUID}-jenkins
+#sleep 5s;
 
 oc start-build parksmap-pipeline --follow -n ${GUID}-jenkins
 sleep 5s;
