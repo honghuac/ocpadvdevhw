@@ -80,6 +80,7 @@ sleep 5s;
 oc set volume dc/parksmap --add --name=parksmap-green-config --configmap-name=parksmap-green-config -n ${GUID}-parks-prod
 sleep 5s;
 
+oc scale --replicas=1 dc parksmap-green -n ${GUID}-parks-prod
 
 #Build NationalParks apps
 
@@ -103,6 +104,7 @@ sleep 5s;
 oc set volume dc/nationalparks --add --name=nationalparks-green-config --configmap-name=nationalparks-green-config -n ${GUID}-parks-prod
 sleep 5s;
 
+oc scale --replicas=1 dc nationalparks-green -n ${GUID}-parks-prod
 
 #Build MLBParks apps
 
@@ -125,3 +127,5 @@ sleep 5s;
 
 oc set volume dc/mlbparks --add --name=mlbparks-green-config --configmap-name=mlbparks-green-config -n ${GUID}-parks-prod
 sleep 5s;
+
+oc scale --replicas=1 dc mlbparks-green -n ${GUID}-parks-prod
