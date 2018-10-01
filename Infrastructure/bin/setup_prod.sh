@@ -62,11 +62,11 @@ sleep 5s;
 
 oc new-app ${GUID}-parks-dev/parksmap:0.0 --name=parksmap-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
 sleep 5s;
-oc expose svc parksmap-blue --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-prod
+oc expose dc parksmap-blue --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-prod
 
-oc new-app ${GUID}-parks-prod/parksmap:0.0 --name=parksmap-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+oc new-app ${GUID}-parks-dev/parksmap:0.0 --name=parksmap-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
 sleep 5s;
-oc expose svc parksmap-green --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-prod
+oc expose dc parksmap-green --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-prod
 
 oc delete configmap parksmap-blue-config -n ${GUID}-parks-prod --ignore-not-found=true
 oc create configmap parksmap-blue-config --from-file=$HOME/Infrastructure/templates/setup_prod/parksmap-blue.properties -n ${GUID}-parks-prod
@@ -86,11 +86,13 @@ oc scale --replicas=1 dc parksmap-green -n ${GUID}-parks-prod
 
 oc new-app ${GUID}-parks-dev/nationalparks:0.0 --name=nationalparks-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
 sleep 5s;
-oc expose svc nationalparks-blue --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-prod
 
-oc new-app ${GUID}-parks-prod/nationalparks:0.0 --name=nationalparks-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+oc expose dc nationalparks-blue --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-prod
+
+oc new-app ${GUID}-parks-dev/nationalparks:0.0 --name=nationalparks-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
 sleep 5s;
-oc expose svc nationalparks-green --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-prod
+
+oc expose dc nationalparks-green --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-prod
 
 oc delete configmap nationalparks-blue-config -n ${GUID}-parks-prod --ignore-not-found=true
 oc create configmap nationalparks-blue-config --from-file=$HOME/Infrastructure/templates/setup_prod/nationalparks-blue.properties -n ${GUID}-parks-prod
@@ -110,10 +112,12 @@ oc scale --replicas=1 dc nationalparks-green -n ${GUID}-parks-prod
 
 oc new-app ${GUID}-parks-dev/mlbparks:0.0 --name=mlbparks-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
 sleep 5s;
-oc expose svc mlbparks-blue --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-prod
 
-oc new-app ${GUID}-parks-prod/mlbparks:0.0 --name=mlbparks-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+oc expose dc mlbparks-blue --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-prod
+
+oc new-app ${GUID}-parks-dev/mlbparks:0.0 --name=mlbparks-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
 sleep 5s;
+
 oc expose dc mlbparks-green --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-prod
 
 oc delete configmap mlbparks-blue-config -n ${GUID}-parks-prod --ignore-not-found=true
