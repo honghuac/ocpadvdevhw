@@ -12,6 +12,6 @@ items:
     strategy:
       type: "JenkinsPipeline"
       jenkinsPipelineStrategy:
-        jenkinsfilePath: ParksMap/Jenkinsfile
+        jenkinsfilePath: ParksMap/Jenkinsfile     
 kind: List
 metadata: []

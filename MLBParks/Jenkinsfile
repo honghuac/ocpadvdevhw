@@ -8,6 +8,9 @@
 //Upload the generated artifact to the artifact repository
 //Run an integration test if the service built was a back-end service
 //Upload the tested container image to another (Nexus) Docker registry
+//  env:
+//    - GUID: "hchin"
+//      CLUSTER: "be9e.openshift.opentlc.com"
 
 podTemplate(
   label: "skopeo-pod",

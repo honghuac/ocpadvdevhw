@@ -63,6 +63,8 @@ sleep 5s;
 #oc new-build --binary=true --name="mlbparks-pipeline" -n ${GUID}-jenkins
 #sleep 5s;
 
+oc set env buildconfigs/mlbparks-pipeline GUID=${GUID} CLUSTER=${CLUSTER}
+
 oc start-build mlbparks-pipeline --follow -n ${GUID}-jenkins
 sleep 5s;
 
@@ -77,6 +79,8 @@ sleep 5s;
 #oc new-build --binary=true --name="nationalparks-pipeline" -n ${GUID}-jenkins
 #sleep 5s;
 
+oc set env buildconfigs/nationalparks-pipeline GUID=${GUID} CLUSTER=${CLUSTER}
+
 oc start-build nationalparks-pipeline --follow -n ${GUID}-jenkins
 sleep 5s;
 
@@ -87,6 +91,8 @@ sleep 5s;
 #build parksmap pipeline
 oc create -f "./Infrastructure/templates/setup_jenkins/parksmap-pipeline.yaml" -n ${GUID}-jenkins
 sleep 5s;
+
+oc set env buildconfigs/parksmap-pipeline GUID=${GUID} CLUSTER=${CLUSTER}
 
 #oc new-build --binary=true --name="parksmap-pipeline" -n ${GUID}-jenkins
 #sleep 5s;

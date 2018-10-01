@@ -13,5 +13,8 @@ items:
       type: "JenkinsPipeline"
       jenkinsPipelineStrategy:
         jenkinsfilePath: MLBParks/Jenkinsfile
+      env:
+        - GUID: "hchin"
+          CLUSTER: "be9e.openshift.opentlc.com"
 kind: List
 metadata: []
