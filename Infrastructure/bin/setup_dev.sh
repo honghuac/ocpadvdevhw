@@ -53,16 +53,16 @@ oc policy add-role-to-user view --serviceaccount=default -n ${GUID}-parks-dev
 
 #Build ParksMap app
 
-oc new-build --binary=true --name="parksmap-binary" --image-stream=redhat-openjdk18-openshift:1.2 -n ${GUID}-parks-dev
+oc new-build --binary=true --name="parksmap" --image-stream=redhat-openjdk18-openshift:1.2 -n ${GUID}-parks-dev
 sleep 5s;
 
-oc start-build parksmap-binary --from-file=./ParksMap/target/parksmap.jar --follow -n ${GUID}-parks-dev
+#oc start-build parksmap-binary --from-file=./ParksMap/target/parksmap.jar --follow -n ${GUID}-parks-dev
+#sleep 5s;
+
+oc new-app parksmap --name=parksmap --allow-missing-imagestream-tags=true -n ${GUID}-parks-dev
 sleep 5s;
 
-oc new-app ${GUID}-parks-dev/parksmap:0.0-0 --name=parksmap --allow-missing-imagestream-tags=true -n ${GUID}-parks-dev
-sleep 5s;
-
-oc expose svc parksmap --port 8080 --labels='type=parksmap-backend'
+oc expose dc/parksmap --port 8080 --labels='type=parksmap-backend'
 
 oc delete configmap parksmap-config -n ${GUID}-parks-dev --ignore-not-found=true
 oc create configmap parksmap-config --from-file=./Infrastructure/templates/setup_dev/parksmap.properties -n ${GUID}-parks-dev
@@ -84,19 +84,16 @@ oc set probe dc/parksmap --readiness --failure-threshold 3 --initial-delay-secon
 
 #Build MLBParks app
 
-oc new-build --binary=true --name="mlbparks-binary" --image-stream=jboss-eap70-openshift:1.7 -n ${GUID}-parks-dev
+oc new-build --binary=true --name="mlbparks" --image-stream=jboss-eap70-openshift:1.7 -n ${GUID}-parks-dev
 sleep 5s;
 
-pwd
-ls
+#oc start-build mlbparks-binary --from-file=./MLBParks/target/mlbparks.war --follow -n ${GUID}-parks-dev
+#sleep 5s;
 
-oc start-build mlbparks-binary --from-file=./MLBParks/target/mlbparks.war --follow -n ${GUID}-parks-dev
+oc new-app mlbparks --name=mlbparks --allow-missing-imagestream-tags=true -n ${GUID}-parks-dev
 sleep 5s;
 
-oc new-app ${GUID}-parks-dev/mlbparks:0.0-0 --name=mlbparks --allow-missing-imagestream-tags=true -n ${GUID}-parks-dev
-sleep 5s;
-
-oc expose svc mlbparks --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-dev
+oc expose dc/mlbparks --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-dev
 
 oc delete configmap mlbparks-config -n ${GUID}-parks-dev --ignore-not-found=true
 oc create configmap mlbparks-config --from-file=./Infrastructure/templates/setup_dev/mlbparks.properties -n ${GUID}-parks-dev
@@ -105,6 +102,9 @@ oc create configmap mlbparks-config --from-file=./Infrastructure/templates/setup
 oc set volume dc/mlbparks --add --name=mlbparks-config --mount-path=./Infrastructure/templates/setup_dev/mlbparks.properties --configmap-name=mlbparks-config -n ${GUID}-parks-dev
 #are tags needed for dc?
 sleep 5s;
+
+#datasource
+#oc set volume dc/mlbparks --add --overwrite --name=mongodb-volume --mount-path=$HOME/Infrastructure/templates/setup_dev/mongods.properties --type persistentVolumeClaim --claim-name=mongodb-data --configmap-name=mongodb-ds
 
 oc set probe dc/mlbparks --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok -n ${GUID}-parks-dev
 oc set probe dc/mlbparks --readiness --failure-threshold 3 --initial-delay-seconds 20 --get-url=http://:8080/ws/healthz/ -n ${GUID}-parks-dev
@@ -121,20 +121,24 @@ oc set probe dc/mlbparks --readiness --failure-threshold 3 --initial-delay-secon
 oc new-build --binary=true --name="nationalparks" --image-stream=redhat-openjdk18-openshift:1.2 -n ${GUID}-parks-dev
 sleep 5s;
 
-oc start-build nationalparks-binary --from-file=./NationalParks/target/nationalparks.jar --follow -n ${GUID}-parks-dev
+#oc start-build nationalparks-binary --from-file=./NationalParks/target/nationalparks.jar --follow -n ${GUID}-parks-dev
+#sleep 5s;
+
+oc new-app nationalparks --name=nationalparks --allow-missing-imagestream-tags=true -n ${GUID}-parks-dev
 sleep 5s;
 
-oc new-app ${GUID}-parks-dev/nationalparks:0.0-0 --name=nationalparks --allow-missing-imagestream-tags=true -n ${GUID}-parks-dev
-sleep 5s;
-
-oc expose svc nationalparks --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-dev
+oc expose dc/nationalparks --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-dev
 
 oc delete configmap nationalparks-config -n ${GUID}-parks-dev --ignore-not-found=true
 oc create configmap nationalparks-config --from-file=./Infrastructure/templates/setup_dev/nationalparks.properties -n ${GUID}-parks-dev
 
 #oc create configmap nationalparks-config --from-literal="nationalparks.properties=Placeholder"
 oc set volume dc/nationalparks --add --name=nationalparks-config --mount-path=./Infrastructure/templates/setup_dev/nationalparks.properties --configmap-name=nationalparks-config -n ${GUID}-parks-dev
+sleep 5s;
 #are tags needed for dc?
+
+#datasource
+#oc set volume dc/mlbparks --add --overwrite --name=mongodb-volume --mount-path=$HOME/Infrastructure/templates/setup_dev/mongods.properties --type persistentVolumeClaim --claim-name=mongodb-data --configmap-name=mongodb-ds
 
 oc set probe dc/nationalparks --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok -n ${GUID}-parks-dev
 oc set probe dc/nationalparks --readiness --failure-threshold 3 --initial-delay-seconds 20 --get-url=http://:8080/ws/healthz/ -n ${GUID}-parks-dev
