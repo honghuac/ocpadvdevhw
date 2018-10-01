@@ -65,11 +65,11 @@ sleep 5s;
 
 oc set env buildconfigs/mlbparks-pipeline GUID=${GUID} CLUSTER=${CLUSTER}
 
-oc start-build buildconfigs/mlbparks-pipeline --follow -n ${GUID}-jenkins
+#oc start-build buildconfigs/mlbparks-pipeline --follow -n ${GUID}-jenkins
 #sleep 5s;
 
-oc new-app mlbparks-pipeline --allow-missing-imagestream-tags=true -n ${GUID}-jenkins
-sleep 5s;
+#oc new-app mlbparks-pipeline --allow-missing-imagestream-tags=true -n ${GUID}-jenkins
+#sleep 5s;
 
 
 #build nationalparks pipeline
@@ -81,11 +81,11 @@ sleep 5s;
 
 oc set env buildconfigs/nationalparks-pipeline GUID=${GUID} CLUSTER=${CLUSTER}
 
-oc start-build buildconfigs/nationalparks-pipeline --follow -n ${GUID}-jenkins
+#oc start-build buildconfigs/nationalparks-pipeline --follow -n ${GUID}-jenkins
 #sleep 5s;
 
-oc new-app nationalparks-pipeline --allow-missing-imagestream-tags=true -n ${GUID}-jenkins
-sleep 5s;
+#oc new-app nationalparks-pipeline --allow-missing-imagestream-tags=true -n ${GUID}-jenkins
+#sleep 5s;
 
 
 #build parksmap pipeline
@@ -97,8 +97,8 @@ oc set env buildconfigs/parksmap-pipeline GUID=${GUID} CLUSTER=${CLUSTER}
 #oc new-build --binary=true --name="parksmap-pipeline" -n ${GUID}-jenkins
 #sleep 5s;
 
-oc start-build parksmap-pipeline --follow -n ${GUID}-jenkins
+#oc start-build parksmap-pipeline --follow -n ${GUID}-jenkins
 #sleep 5s;
 
-oc new-app parksmap-pipeline --allow-missing-imagestream-tags=true -n ${GUID}-jenkins
-sleep 5s;
+#oc new-app parksmap-pipeline --allow-missing-imagestream-tags=true -n ${GUID}-jenkins
+#sleep 5s;
