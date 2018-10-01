@@ -23,6 +23,9 @@
 
 # Make the Green service active initially to guarantee a Blue rollout upon the first pipeline run
 
+# Add similar commands -- oc new-app docker.io/rocketchat/rocket.chat:0.63.3 -e MONGO_URL="mongodb://mongodb_user:mongodb_password@mongodb:27017/mongodb?replicaSet=rs0"
+# mongoimport -d test -c shops mlbparks.json, nationalparks.json
+
 
 if [ "$#" -ne 1 ]; then
     echo "Usage:"

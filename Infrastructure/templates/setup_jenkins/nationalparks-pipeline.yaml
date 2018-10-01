@@ -8,7 +8,7 @@ items:
     source:
       type: "Git"
       git:
-        uri: "https://github.com/honghuac/ocpadvdevhw/Nationalparks"
+        uri: "https://github.com/honghuac/ocpadvdevhw/tree/master/Nationalparks"
     strategy:
       type: "JenkinsPipeline"
       jenkinsPipelineStrategy:

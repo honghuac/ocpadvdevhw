@@ -16,6 +16,7 @@
 
 #Metadata name of VolumeClaimTemplates and name of volumeMount must be the same. The pair in dev must be distinct from the pair in prod.
 
+# Add similar command -- oc new-app docker.io/rocketchat/rocket.chat:0.63.3 -e MONGO_URL="mongodb://mongodb_user:mongodb_password@mongodb:27017/mongodb?replicaSet=rs0"
 
 if [ "$#" -ne 1 ]; then
     echo "Usage:"
