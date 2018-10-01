@@ -72,8 +72,8 @@ oc set volume dc/parksmap --add --name=parksmap-config --mount-path=./Infrastruc
 #are tags needed for dc?
 sleep 5s;
 
-oc set probe dc/parksmap --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
-oc set probe dc/parksmap --readiness --failure-threshold 3 --initial-delay-seconds 20 --get-url=http://:8080/ws/appname/
+oc set probe dc/parksmap --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok -n ${GUID}-parks-dev
+oc set probe dc/parksmap --readiness --failure-threshold 3 --initial-delay-seconds 20 --get-url=http://:8080/ws/appname/ -n ${GUID}-parks-dev
 
 
 #Test ParksMap app
