@@ -31,19 +31,19 @@ oc project ${GUID}-parks-dev
 
 #Create MongoDB headless service
 
-oc create -f ".Infrastructure/templates/setup_dev/mongohlsvc.yaml" -n ${GUID}-parks-dev
+oc create -f "./Infrastructure/templates/setup_dev/mongohlsvc.yaml" -n ${GUID}-parks-dev
 
 sleep 5s;
 
 #Create MongoDB service
 
-oc create -f ".Infrastructure/templates/setup_dev/mongosvc.yaml" -n ${GUID}-parks-dev
+oc create -f "./Infrastructure/templates/setup_dev/mongosvc.yaml" -n ${GUID}-parks-dev
 
 sleep 5s;
 
 #Create MongoDB stateful set
 
-oc create -f ".Infrastructure/templates/setup_dev/mongosfs.yaml" -n ${GUID}-parks-dev
+oc create -f "./Infrastructure/templates/setup_dev/mongosfs.yaml" -n ${GUID}-parks-dev
 
 sleep 5s;
 
@@ -86,6 +86,9 @@ oc set probe dc/parksmap --readiness --failure-threshold 3 --initial-delay-secon
 
 oc new-build --binary=true --name="mlbparks-binary" --image-stream=jboss-eap70-openshift:1.7 -n ${GUID}-parks-dev
 sleep 5s;
+
+pwd
+ls
 
 oc start-build mlbparks-binary --from-file=./MLBParks/target/mlbparks.war --follow -n ${GUID}-parks-dev
 sleep 5s;

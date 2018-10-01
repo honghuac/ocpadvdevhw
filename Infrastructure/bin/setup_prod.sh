@@ -44,17 +44,17 @@ oc policy add-role-to-user view --serviceaccount=default -n ${GUID}-parks-prod
 
 #Create MongoDB headless service
 
-oc create -f ".Infrastructure/templates/setup_dev/mongohlsvc.yaml" -n ${GUID}-parks-prod
+oc create -f "./Infrastructure/templates/setup_dev/mongohlsvc.yaml" -n ${GUID}-parks-prod
 sleep 5s;
 
 #Create MongoDB service
 
-oc create -f ".Infrastructure/templates/setup_dev/mongosvc.yaml" -n ${GUID}-parks-prod
+oc create -f "./Infrastructure/templates/setup_dev/mongosvc.yaml" -n ${GUID}-parks-prod
 sleep 5s;
 
 #Create MongoDB stateful set
 
-oc create -f ".Infrastructure/templates/setup_dev/mongosfs.yaml" -n ${GUID}-parks-prod
+oc create -f "./Infrastructure/templates/setup_dev/mongosfs.yaml" -n ${GUID}-parks-prod
 sleep 5s;
 
 
