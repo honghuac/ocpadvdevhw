@@ -8,10 +8,10 @@ items:
     source:
       type: "Git"
       git:
-        uri: "https://github.com/honghuac/ocpadvdevhw/blob/master/ParksMap/"
+        uri: "https://github.com/honghuac/ocpadvdevhw/"
     strategy:
       type: "JenkinsPipeline"
       jenkinsPipelineStrategy:
-        jenkinsfilePath: Jenkinsfile
+        jenkinsfilePath: ParksMap/Jenkinsfile
 kind: List
 metadata: []
