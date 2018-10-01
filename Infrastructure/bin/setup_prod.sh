@@ -69,10 +69,10 @@ sleep 5s;
 oc expose dc parksmap-green --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-prod
 
 oc delete configmap parksmap-blue-config -n ${GUID}-parks-prod --ignore-not-found=true
-oc create configmap parksmap-blue-config --from-file=$HOME/Infrastructure/templates/setup_prod/parksmap-blue.properties -n ${GUID}-parks-prod
+oc create configmap parksmap-blue-config --from-file=./Infrastructure/templates/setup_prod/parksmap-blue.properties -n ${GUID}-parks-prod
 
 oc delete configmap parksmap-green-config -n ${GUID}-parks-prod --ignore-not-found=true
-oc create configmap parksmap-green-config --from-file=$HOME/Infrastructure/templates/setup_prod/parksmap-green.properties -n ${GUID}-parks-prod
+oc create configmap parksmap-green-config --from-file=./Infrastructure/templates/setup_prod/parksmap-green.properties -n ${GUID}-parks-prod
 
 oc set volume dc/parksmap --add --name=parksmap-blue-config --configmap-name=parksmap-blue-config -n ${GUID}-parks-prod
 sleep 5s;
@@ -95,10 +95,10 @@ sleep 5s;
 oc expose dc nationalparks-green --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-prod
 
 oc delete configmap nationalparks-blue-config -n ${GUID}-parks-prod --ignore-not-found=true
-oc create configmap nationalparks-blue-config --from-file=$HOME/Infrastructure/templates/setup_prod/nationalparks-blue.properties -n ${GUID}-parks-prod
+oc create configmap nationalparks-blue-config --from-file=./Infrastructure/templates/setup_prod/nationalparks-blue.properties -n ${GUID}-parks-prod
 
 oc delete configmap nationalparks-green-config -n ${GUID}-parks-prod --ignore-not-found=true
-oc create configmap nationalparks-green-config --from-file=$HOME/Infrastructure/templates/setup_prod/nationalparks-green.properties -n ${GUID}-parks-prod
+oc create configmap nationalparks-green-config --from-file=./Infrastructure/templates/setup_prod/nationalparks-green.properties -n ${GUID}-parks-prod
 
 oc set volume dc/nationalparks --add --name=nationalparks-blue-config --configmap-name=nationalparks-blue-config -n ${GUID}-parks-prod
 sleep 5s;
