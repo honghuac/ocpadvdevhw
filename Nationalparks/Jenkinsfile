@@ -111,20 +111,24 @@ podTemplate(
     stage('Integration Tests') {
       echo "Running Integration Tests"
 
-  // Create a new task called "integration_test_1"
+  // Curl test 1
   echo "Curl test 1"
   //sh "curl -i -u 'nationalparks:redhat1' -H 'Content-Length: 0' -X POST http://nationalparks.${GUID}-parks-dev.svc.cluster.local:8080/ws/nationalparks/integration_test_1"
-  sh "curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/nationalparks -o template --template {{.spec.host}})"/ws/healthz/"`"
 
-  // Retrieve task with id "1"
+  sh "curl -i -u 'nationalparks:redhat1' -H 'Content-Length: 0' -X POST http://nationalparks.${GUID}-parks-dev.svc.cluster.local:8080/ws/healthz/"
+
+  // Curl test 2
   echo "Curl test 2"
   //sh "curl -i -u 'nationalparks:redhat1' -H 'Content-Length: 0' -X GET http://nationalparks.${GUID}-parks-dev.svc.cluster.local:8080/ws/nationalparks/1"
-  sh "curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/nationalparks -o template --template {{.spec.host}})"/ws/data/load/"`"
 
-  // Delete task with id "1"
+  sh "curl -i -u 'nationalparks:redhat1' -H 'Content-Length: 0' -X POST http://nationalparks.${GUID}-parks-dev.svc.cluster.local:8080/ws/data/load/"
+
+  // Curl test 3
   echo "Curl test 3"
   //sh "curl -i -u 'nationalparks:redhat1' -H 'Content-Length: 0' -X DELETE http://nationalparks.${GUID}-parks-dev.svc.cluster.local:8080/ws/nationalparks/1"
-  sh "curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/nationalparks -o template --template {{.spec.host}})"/ws/info/"`"
+
+  sh "curl -i -u 'nationalparks:redhat1' -H 'Content-Length: 0' -X POST http://nationalparks.${GUID}-parks-dev.svc.cluster.local:8080/ws/info/"
+
     }
 
     // Copy Image to Nexus Docker Registry
