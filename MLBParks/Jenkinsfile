@@ -59,6 +59,7 @@ podTemplate(
         // Do not run tests in this step
         stage('Build war') {
           echo "Building version ${version}"
+        sh "cd MLBParks"
         sh "${mvnCmd} clean package spring-boot:repackage -DskipTests -Dcom.redhat.xpaas.repo.redhatga"
         }
 
