@@ -52,6 +52,7 @@ sleep 5s;
 oc policy add-role-to-user view --serviceaccount=default -n ${GUID}-parks-dev
 
 #Build ParksMap app
+echo "Building ParksMap App in project ${GUID}-parks-dev"
 
 oc new-build --binary=true --name="parksmap" --image-stream=redhat-openjdk18-openshift:1.2 -n ${GUID}-parks-dev
 sleep 5s;
@@ -83,6 +84,8 @@ oc set probe dc/parksmap --readiness --failure-threshold 3 --initial-delay-secon
 
 
 #Build MLBParks app
+
+echo "Building MLBParks App in project ${GUID}-parks-dev"
 
 oc new-build --binary=true --name="mlbparks" --image-stream=jboss-eap70-openshift:1.7 -n ${GUID}-parks-dev
 sleep 5s;
@@ -116,8 +119,9 @@ oc set probe dc/mlbparks --readiness --failure-threshold 3 --initial-delay-secon
 #curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/mlbparks -o template --template {{.spec.host}})"/ws/data/load/"`
 #curl -i -v -k `echo "https://"$(oc get route/${GUID}-parks-dev/mlbparks -o template --template {{.spec.host}})"/ws/info/"`
 
-
+echo "Building NationalParks App in project ${GUID}-parks-dev"
 #Build NationalParks app
+
 oc new-build --binary=true --name="nationalparks" --image-stream=redhat-openjdk18-openshift:1.2 -n ${GUID}-parks-dev
 sleep 5s;
 
@@ -144,6 +148,8 @@ oc set probe dc/nationalparks --liveness --failure-threshold 3 --initial-delay-s
 oc set probe dc/nationalparks --readiness --failure-threshold 3 --initial-delay-seconds 20 --get-url=http://:8080/ws/healthz/ -n ${GUID}-parks-dev
 
 sleep 5s;
+
+echo "Completed setup of Parks Development Environment in project ${GUID}-parks-dev"
 
 #Test NationalParks app
 

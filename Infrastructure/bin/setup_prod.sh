@@ -60,6 +60,8 @@ sleep 5s;
 
 #Build ParksMap apps
 
+echo "Building ParksMap App in project ${GUID}-parks-prod"
+
 oc new-app ${GUID}-parks-dev/parksmap:0.0 --name=parksmap-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
 sleep 5s;
 oc expose dc parksmap-blue --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-prod
@@ -83,6 +85,8 @@ sleep 5s;
 oc scale --replicas=1 dc parksmap-green -n ${GUID}-parks-prod
 
 #Build NationalParks apps
+
+echo "Building NationalParks App in project ${GUID}-parks-prod"
 
 oc new-app ${GUID}-parks-dev/nationalparks:0.0 --name=nationalparks-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
 sleep 5s;
@@ -110,6 +114,8 @@ oc scale --replicas=1 dc nationalparks-green -n ${GUID}-parks-prod
 
 #Build MLBParks apps
 
+echo "Building MLBParks App in project ${GUID}-parks-prod"
+
 oc new-app ${GUID}-parks-dev/mlbparks:0.0 --name=mlbparks-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
 sleep 5s;
 
@@ -133,3 +139,5 @@ oc set volume dc/mlbparks-green --add --name=mlbparks-green-config --configmap-n
 sleep 5s;
 
 oc scale --replicas=1 dc mlbparks-green -n ${GUID}-parks-prod
+
+echo "Completed Setup of Parks Production Environment in project ${GUID}-parks-prod"

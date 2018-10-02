@@ -49,3 +49,5 @@ sudo docker build . -t docker-registry-default.apps.${CLUSTER}.openshift.opentlc
 sleep 20s;
 sudo docker login -u opentlc-mgr -p $(oc whoami -t) docker-registry-default.apps.${CLUSTER}.openshift.opentlc.com
 sudo docker push docker-registry-default.apps.${CLUSTER}.openshift.opentlc.com/grading-jenkins/jenkins-slave-maven-appdev:v3.10
+
+echo "Completed setting up of Jenkins in project grading-jenkins for Cluster ${CLUSTER} for user ${USER}"

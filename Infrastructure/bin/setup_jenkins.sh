@@ -94,6 +94,8 @@ sleep 5s;
 
 oc set env buildconfigs/parksmap-pipeline GUID=${GUID} CLUSTER=${CLUSTER} -n ${GUID}-jenkins
 
+echo "Completed of setting up Jenkins in project ${GUID}-jenkins from Git Repo ${REPO} for Cluster ${CLUSTER}"
+
 #oc new-build --binary=true --name="parksmap-pipeline" -n ${GUID}-jenkins
 #sleep 5s;
 

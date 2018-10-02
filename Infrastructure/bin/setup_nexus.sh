@@ -14,6 +14,7 @@ fi
 
 GUID=$1
 echo "Setting up Nexus in project $GUID-nexus"
+
 oc new-app sonatype/nexus3:latest -n $GUID-nexus
 
 sleep 15s;
@@ -34,6 +35,8 @@ oc create -f "./Infrastructure/templates/setup_nexus/nexus.yaml" -n $GUID-nexus
 
 sleep 5s;
 
+echo "Setting PV and probes in project $GUID-nexus"
+
 oc set volume dc/nexus3 --add --overwrite --name=nexus3-volume-1 --mount-path=/nexus-data/ --type persistentVolumeClaim --claim-name=nexus-pvc -n $GUID-nexus
 
 oc set probe dc/nexus3 --liveness --failure-threshold 3 --initial-delay-seconds 60 -- echo ok -n $GUID-nexus
@@ -49,7 +52,9 @@ wget https://raw.githubusercontent.com/wkulhanek/ocp_advanced_development_resour
 
 chmod +x setup_nexus3.sh
 
-./setup_nexus3.sh admin admin123 http://$(oc get route nexus3 --template='{{ .spec.host }}' -n $GUID-nexus) 
+echo "Running setup_nexus3 script in $GUID-nexus"
+
+./setup_nexus3.sh admin admin123 http://$(oc get route nexus3 --template='{{ .spec.host }}' -n $GUID-nexus)
 
 sleep 5s;
 
@@ -58,3 +63,5 @@ sleep 5s;
 oc expose dc/nexus3 --port=5000 --name=nexus-registry -n $GUID-nexus
 
 oc create route edge nexus-registry --service=nexus-registry --port=5000 -n $GUID-nexus
+
+echo "Completed setting up Nexus in project $GUID-nexus"
