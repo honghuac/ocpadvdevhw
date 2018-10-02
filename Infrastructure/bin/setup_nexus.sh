@@ -39,7 +39,7 @@ echo "Setting PV and probes in project $GUID-nexus"
 
 oc set volume dc/nexus3 --add --overwrite --name=nexus3-volume-1 --mount-path=/nexus-data/ --type persistentVolumeClaim --claim-name=nexus-pvc -n $GUID-nexus
 
-oc set probe dc/nexus3 --liveness --failure-threshold 3 --initial-delay-seconds 60 -- echo ok -n $GUID-nexus
+oc set probe dc/nexus3 --liveness --failure-threshold 3 --initial-delay-seconds 60 -n $GUID-nexus -- echo ok
 
 oc set probe dc/nexus3 --readiness --failure-threshold 3 --initial-delay-seconds 60 --get-url=http://:8081/repository/maven-public/ -n $GUID-nexus
 

@@ -73,7 +73,7 @@ oc set volume dc/parksmap --add --name=parksmap-config --mount-path=./Infrastruc
 #are tags needed for dc?
 sleep 5s;
 
-oc set probe dc/parksmap --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok -n ${GUID}-parks-dev
+oc set probe dc/parksmap --liveness --failure-threshold 3 --initial-delay-seconds 40 -n ${GUID}-parks-dev -- echo ok
 oc set probe dc/parksmap --readiness --failure-threshold 3 --initial-delay-seconds 20 --get-url=http://:8080/ws/appname/ -n ${GUID}-parks-dev
 
 
@@ -109,7 +109,7 @@ sleep 5s;
 #datasource
 #oc set volume dc/mlbparks --add --overwrite --name=mongodb-volume --mount-path=$HOME/Infrastructure/templates/setup_dev/mongods.properties --type persistentVolumeClaim --claim-name=mongodb-data --configmap-name=mongodb-ds
 
-oc set probe dc/mlbparks --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok -n ${GUID}-parks-dev
+oc set probe dc/mlbparks --liveness --failure-threshold 3 --initial-delay-seconds 40 -n ${GUID}-parks-dev -- echo ok
 oc set probe dc/mlbparks --readiness --failure-threshold 3 --initial-delay-seconds 20 --get-url=http://:8080/ws/healthz/ -n ${GUID}-parks-dev
 
 
@@ -144,7 +144,7 @@ sleep 5s;
 #datasource
 #oc set volume dc/mlbparks --add --overwrite --name=mongodb-volume --mount-path=$HOME/Infrastructure/templates/setup_dev/mongods.properties --type persistentVolumeClaim --claim-name=mongodb-data --configmap-name=mongodb-ds
 
-oc set probe dc/nationalparks --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok -n ${GUID}-parks-dev
+oc set probe dc/nationalparks --liveness --failure-threshold 3 --initial-delay-seconds 40 -n ${GUID}-parks-dev -- echo ok
 oc set probe dc/nationalparks --readiness --failure-threshold 3 --initial-delay-seconds 20 --get-url=http://:8080/ws/healthz/ -n ${GUID}-parks-dev
 
 sleep 5s;
