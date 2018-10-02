@@ -56,7 +56,7 @@ podTemplate(
 
     // Using Maven build the war file
     // Do not run tests in this step
-    stage('Build war') {
+    stage('Build jar') {
       echo "Building version ${version}"
     sh "cd ParksMap"
     sh "${mvnCmd} clean package spring-boot:repackage -DskipTests -Dcom.redhat.xpaas.repo.redhatga"
@@ -77,7 +77,7 @@ podTemplate(
     // Publish the built war file to Nexus
     stage('Publish to Nexus') {
       echo "Publish to Nexus"
-  sh "${mvnCmd} deploy -DskipTests=true -DaltDeploymentRepository=nexus::default::http://nexus3-${GUID}-nexus.svc.cluster.local:8081/repository/releases"
+  sh "${mvnCmd} deploy -DskipTests=true -DaltDeploymentRepository=nexus::default::http://nexus3-${GUID}-nexus.apps.${CLUSTER}:8081/repository/releases"
     }
 
     // Build the OpenShift Image in OpenShift and tag it.
@@ -86,7 +86,7 @@ podTemplate(
       sh "oc start-build parksmap --follow --from-file=./target/parksmap.jar -n ${GUID}-parks-dev"
 
     // OR use the file you just published into Nexus:
-    // sh "oc start-build parksmap --follow --from-file=http://nexus3.${GUID}-nexus.svc.cluster.local:8081/repository/releases/${version}/parksmap-${version}.jar -n ${GUID}-parks-dev"
+    // sh "oc start-build parksmap --follow --from-file=http://nexus3-${GUID}-nexus.apps.${CLUSTER}:8081/repository/releases/${version}/parksmap-${version}.jar -n ${GUID}-parks-dev"
 
     // Tag the image using the devTag
     openshiftTag alias: 'false', destStream: 'parksmap', destTag: devTag, destinationNamespace: '${GUID}-parks-dev', namespace: '${GUID}-parks-dev', srcStream: 'parksmap', srcTag: 'latest', verbose: 'false'
