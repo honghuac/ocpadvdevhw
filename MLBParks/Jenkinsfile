@@ -59,7 +59,7 @@ podTemplate(
         // Do not run tests in this step
         stage('Build war') {
           echo "Building version ${version}"
-        sh "${mvnCmd} clean package spring-boot:repackage -DskipTests -Dcom.redhat.xpaas.repo.redhatga"
+        sh "${mvnCmd} clean package -DskipTests=true"
         }
 
         // Using Maven run the unit tests
@@ -77,7 +77,7 @@ podTemplate(
         // Publish the built war file to Nexus
         stage('Publish to Nexus') {
           echo "Publish to Nexus"
-      sh "${mvnCmd} deploy -DskipTests=true -DaltDeploymentRepository=nexus::default::http://nexus3-${GUID}-nexus.apps.${CLUSTER}:8081/repository/releases"
+      sh "${mvnCmd} deploy -DskipTests=true -DaltDeploymentRepository=nexus::default::http://nexus3-${GUID}-nexus.apps.${CLUSTER}/repository/releases"
         }
 
         // Build the OpenShift Image in OpenShift and tag it.
