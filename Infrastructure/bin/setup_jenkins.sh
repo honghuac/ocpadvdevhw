@@ -44,7 +44,7 @@ oc new-app jenkins-persistent --param ENABLE_OAUTH=true --param MEMORY_LIMIT=2Gi
 sleep 5s;
 
 #b. Build Maven Slave pod containing Skopeo
-oc new-build openshift/jenkins-slave-maven-centos7:v3.10 --allow-missing-images --dockerfile=$'FROM docker.io/openshift/jenkins-slave-maven-centos7:v3.10\nUSER root\nRUN yum -y install skopeo apb && yum clean all\nUSER 1001'
+oc new-build openshift/jenkins-slave-maven-centos7:v3.10 --allow-missing-images --dockerfile=$'FROM docker.io/openshift/jenkins-slave-maven-centos7:v3.10\nUSER root\nRUN yum -y install skopeo apb && yum clean all\nUSER 1001' -n ${GUID}-jenkins
 sleep 5s;
 
 #oc new-app ${GUID}-jenkins/jenkins-slave-maven-centos7 --allow-missing-imagestream-tags=true -n ${GUID}-jenkins
