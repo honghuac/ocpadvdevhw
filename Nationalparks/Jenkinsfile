@@ -85,7 +85,7 @@ podTemplate(
     // Build the OpenShift Image in OpenShift and tag it.
     stage('Build and Tag OpenShift Image') {
       echo "Building OpenShift container image nationalparks:${devTag}"
-      sh "oc start-build nationalparks --follow --from-file=./target/nationalparks.jar -n ${GUID}-parks-dev"
+      sh "oc start-build nationalparks --follow --from-file=./Nationalparks/target/nationalparks.jar -n ${GUID}-parks-dev"
 
     // OR use the file you just published into Nexus:
     // sh "oc start-build nationalparks --follow --from-file=http://nexus3-${GUID}-nexus.apps.${CLUSTER}:8081/repository/releases/${version}/nationalparks-${version}.jar -n ${GUID}-parks-dev"
@@ -102,7 +102,7 @@ podTemplate(
 
     // Update the Config Map which contains the AppName variable
     sh "oc delete configmap nationalparks-config -n ${GUID}-parks-dev --ignore-not-found=true"
-    sh "oc create configmap nationalparks-config --from-file=./templates/setup_dev/nationalparks.properties -n ${GUID}-parks-dev"
+    sh "oc create configmap nationalparks-config --from-file=./Infrastructure/templates/setup_dev/nationalparks.properties -n ${GUID}-parks-dev"
 
     // Deploy the development application.
     openshiftDeploy depCfg: 'nationalparks', namespace: '${GUID}-parks-dev', verbose: 'false', waitTime: '', waitUnit: 'sec'
@@ -163,7 +163,7 @@ podTemplate(
 
     // Update the Config Map which contains the users for the application
     sh "oc delete configmap ${destApp}-config -n ${GUID}-parks-prod --ignore-not-found=true"
-    sh "oc create configmap ${destApp}-config --from-file=./templates/setup_dev/nationalparks.properties -n ${GUID}-parks-prod"
+    sh "oc create configmap ${destApp}-config --from-file=./Infrastructure/templates/setup_dev/nationalparks.properties -n ${GUID}-parks-prod"
 
     // Deploy the inactive application.
     openshiftDeploy depCfg: destApp, namespace: '${GUID}-parks-prod', verbose: 'false', waitTime: '', waitUnit: 'sec'
