@@ -74,10 +74,10 @@ oc create configmap parksmap-blue-config --from-file=./Infrastructure/templates/
 oc delete configmap parksmap-green-config -n ${GUID}-parks-prod --ignore-not-found=true
 oc create configmap parksmap-green-config --from-file=./Infrastructure/templates/setup_prod/parksmap-green.properties -n ${GUID}-parks-prod
 
-oc set volume dc/parksmap --add --name=parksmap-blue-config --configmap-name=parksmap-blue-config -n ${GUID}-parks-prod
+oc set volume dc/parksmap-blue --add --name=parksmap-blue-config --configmap-name=parksmap-blue-config -n ${GUID}-parks-prod
 sleep 5s;
 
-oc set volume dc/parksmap --add --name=parksmap-green-config --configmap-name=parksmap-green-config -n ${GUID}-parks-prod
+oc set volume dc/parksmap-green --add --name=parksmap-green-config --configmap-name=parksmap-green-config -n ${GUID}-parks-prod
 sleep 5s;
 
 oc scale --replicas=1 dc parksmap-green -n ${GUID}-parks-prod
@@ -100,10 +100,10 @@ oc create configmap nationalparks-blue-config --from-file=./Infrastructure/templ
 oc delete configmap nationalparks-green-config -n ${GUID}-parks-prod --ignore-not-found=true
 oc create configmap nationalparks-green-config --from-file=./Infrastructure/templates/setup_prod/nationalparks-green.properties -n ${GUID}-parks-prod
 
-oc set volume dc/nationalparks --add --name=nationalparks-blue-config --configmap-name=nationalparks-blue-config -n ${GUID}-parks-prod
+oc set volume dc/nationalparks-blue --add --name=nationalparks-blue-config --configmap-name=nationalparks-blue-config -n ${GUID}-parks-prod
 sleep 5s;
 
-oc set volume dc/nationalparks --add --name=nationalparks-green-config --configmap-name=nationalparks-green-config -n ${GUID}-parks-prod
+oc set volume dc/nationalparks-green --add --name=nationalparks-green-config --configmap-name=nationalparks-green-config -n ${GUID}-parks-prod
 sleep 5s;
 
 oc scale --replicas=1 dc nationalparks-green -n ${GUID}-parks-prod
@@ -126,10 +126,10 @@ oc create configmap mlbparks-blue-config --from-file=./Infrastructure/templates/
 oc delete configmap mlbparks-green-config -n ${GUID}-parks-prod --ignore-not-found=true
 oc create configmap mlbparks-green-config --from-file=./Infrastructure/templates/setup_prod/mlbparks-green.properties -n ${GUID}-parks-prod
 
-oc set volume dc/mlbparks --add --name=mlbparks-blue-config --configmap-name=mlbparks-blue-config -n ${GUID}-parks-prod
+oc set volume dc/mlbparks-blue --add --name=mlbparks-blue-config --configmap-name=mlbparks-blue-config -n ${GUID}-parks-prod
 sleep 5s;
 
-oc set volume dc/mlbparks --add --name=mlbparks-green-config --configmap-name=mlbparks-green-config -n ${GUID}-parks-prod
+oc set volume dc/mlbparks-green --add --name=mlbparks-green-config --configmap-name=mlbparks-green-config -n ${GUID}-parks-prod
 sleep 5s;
 
 oc scale --replicas=1 dc mlbparks-green -n ${GUID}-parks-prod
