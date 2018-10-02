@@ -64,6 +64,7 @@ echo "Building ParksMap App in project ${GUID}-parks-prod"
 
 oc new-app ${GUID}-parks-dev/parksmap:0.0 --name=parksmap-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
 sleep 5s;
+
 oc expose dc parksmap-blue --port 8080 --labels='type=parksmap-backend' -n ${GUID}-parks-prod
 
 oc new-app ${GUID}-parks-dev/parksmap:0.0 --name=parksmap-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
