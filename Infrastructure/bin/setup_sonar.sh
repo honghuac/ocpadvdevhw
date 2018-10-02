@@ -20,12 +20,21 @@ fi
 GUID=$1
 echo "Setting up Sonarqube in project $GUID-sonarqube"
 
+oc new-app --template=postgresql-persistent --param POSTGRESQL_USER=sonar --param POSTGRESQL_PASSWORD=sonar --param POSTGRESQL_DATABASE=sonar --param VOLUME_CAPACITY=4Gi --labels=app=sonarqube_db -n ${GUID}-sonarqube
+sleep 5s;
+
+oc new-app --docker-image=wkulhanek/sonarqube:6.7.4 --env=SONARQUBE_JDBC_USERNAME=sonar --env=SONARQUBE_JDBC_PASSWORD=sonar --env=SONARQUBE_JDBC_URL=jdbc:postgresql://postgresql/sonar --labels=app=sonarqube -n ${GUID}-sonarqube
+
+oc rollout pause dc sonarqube -n ${GUID}-sonarqube
+
+echo "Sonarqube rollout paused"
+
 oc set probe dc/sonarqube --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok -n ${GUID}-sonarqube
 
-echo "Setting up Sonarqube in project $GUID-sonarqube"
+echo "Setting first probe"
 
 oc set probe dc/sonarqube --readiness --failure-threshold 3 --initial-delay-seconds 20 --get-url=http://:9000/about -n ${GUID}-sonarqube
 
-echo "Setting up Sonarqube in project $GUID-sonarqube"
+echo "Setting second probe"
 
 oc rollout resume dc sonarqube -n ${GUID}-sonarqube
