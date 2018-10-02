@@ -33,7 +33,7 @@ podTemplate(
     // and replace 'GUID' in the file with your ${GUID} to point to >your< Nexus instance
 
 
-        def mvnCmd = "mvn -s ./nexus_settings.xml -f ./MLBparks"
+        def mvnCmd = "mvn -s ./nexus_settings.xml -f ./MLBParks"
 
       // Checkout Source Code.
       stage('Checkout Source') {
@@ -46,9 +46,9 @@ podTemplate(
         // and not inside the scope of a stage - otherwise they would not
         // be accessible from other stages.
         // Extract version and other properties from the pom.xml
-        def groupId    = getGroupIdFromPom("./MLBparks/pom.xml")
-        def artifactId = getArtifactIdFromPom("./MLBparks/pom.xml")
-        def version    = getVersionFromPom("./MLBparks/pom.xml")
+        def groupId    = getGroupIdFromPom("./MLBParks/pom.xml")
+        def artifactId = getArtifactIdFromPom("./MLBParks/pom.xml")
+        def version    = getVersionFromPom("./MLBParks/pom.xml")
 
         // Set the tag for the development image: version + build number
         def devTag  = "${version}-${BUILD_NUMBER}"
@@ -71,7 +71,7 @@ podTemplate(
         // Using Maven call SonarQube for Code Analysis
         stage('Code Analysis') {
           echo "Running Code Analysis"
-        sh "${mvnCmd} sonar:sonar -Dsonar.host.url=http://sonarqube-${GUID}-sonarqube.apps.${CLUSTER}.openshift.opentlc.com/ -Dsonar.projectName=${JOB_BASE_NAME}-${devTag}"
+        sh "${mvnCmd} sonar:sonar -Dsonar.host.url=http://sonarqube-${GUID}-sonarqube.apps.${CLUSTER}/ -Dsonar.projectName=${JOB_BASE_NAME}-${devTag}"
         }
 
         // Publish the built war file to Nexus

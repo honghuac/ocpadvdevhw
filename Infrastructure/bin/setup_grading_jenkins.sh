@@ -45,9 +45,9 @@ sudo systemctl start docker
 wget https://raw.githubusercontent.com/honghuac/ocpadvdevhw/master/Infrastructure/templates/setup_jenkins/Dockerfile
 
 #c. Build, Tag, Push Docker image
-sudo docker build . -t docker-registry-default.apps.${CLUSTER}.openshift.opentlc.com/grading-jenkins/jenkins-slave-maven-appdev:v3.10
+sudo docker build . -t docker-registry-default.apps.${CLUSTER}/grading-jenkins/jenkins-slave-maven-appdev:v3.10
 sleep 20s;
-sudo docker login -u opentlc-mgr -p $(oc whoami -t) docker-registry-default.apps.${CLUSTER}.openshift.opentlc.com
-sudo docker push docker-registry-default.apps.${CLUSTER}.openshift.opentlc.com/grading-jenkins/jenkins-slave-maven-appdev:v3.10
+sudo docker login -u opentlc-mgr -p $(oc whoami -t) docker-registry-default.apps.${CLUSTER}
+sudo docker push docker-registry-default.apps.${CLUSTER}/grading-jenkins/jenkins-slave-maven-appdev:v3.10
 
 echo "Completed setting up of Jenkins in project grading-jenkins for Cluster ${CLUSTER} for user ${USER}"
