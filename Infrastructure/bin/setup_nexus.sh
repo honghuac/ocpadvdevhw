@@ -45,23 +45,8 @@ oc set probe dc/nexus3 --readiness --failure-threshold 3 --initial-delay-seconds
 
 oc rollout resume dc nexus3 -n $GUID-nexus
 
-sleep 5s;
+sleep 5m;
 
-#curl -o setup_nexus3.sh -s https://raw.githubusercontent.com/wkulhanek/ocp_advanced_development_resources/master/nexus/setup_nexus3.sh
-wget https://raw.githubusercontent.com/wkulhanek/ocp_advanced_development_resources/master/nexus/setup_nexus3.sh
-
-chmod +x setup_nexus3.sh
-
-echo "Running setup_nexus3 script in $GUID-nexus"
-
-./setup_nexus3.sh admin admin123 http://$(oc get route nexus3 --template='{{ .spec.host }}' -n $GUID-nexus)
-
-sleep 5s;
-
-#rm setup_nexus3.sh
-
-oc expose dc/nexus3 --port=5000 --name=nexus-registry -n $GUID-nexus
-
-oc create route edge nexus-registry --service=nexus-registry --port=5000 -n $GUID-nexus
+#stuff goes here
 
 echo "Completed setting up Nexus in project $GUID-nexus"
