@@ -45,9 +45,9 @@ podTemplate(
     // and not inside the scope of a stage - otherwise they would not
     // be accessible from other stages.
     // Extract version and other properties from the pom.xml
-    def groupId    = getGroupIdFromPom("pom.xml")
-    def artifactId = getArtifactIdFromPom("pom.xml")
-    def version    = getVersionFromPom("pom.xml")
+    def groupId    = getGroupIdFromPom("./ParksMap/pom.xml")
+    def artifactId = getArtifactIdFromPom("./ParksMap/pom.xml")
+    def version    = getVersionFromPom("./ParksMap/pom.xml")
 
     // Set the tag for the development image: version + build number
     def devTag  = "${version}-${BUILD_NUMBER}"
@@ -156,7 +156,7 @@ podTemplate(
     // Update the Config Map which contains the users for the application
     //sh "oc delete configmap ${destApp}-config -n ${GUID}-parks-prod --ignore-not-found=true"
     //sh "oc create configmap ${destApp}-config --from-file=./templates/setup_dev/parksmap.properties -n ${GUID}-parks-prod"
-    //sh "oc set volume dc/parksmap-green --add --name=jboss-config --mount-path=/opt/eap/standalone/configuration/application-users.properties --sub-path=application-users.properties -n ${GUID}-parks-prod"
+    // THIS IS OUTDATED: sh "oc set volume dc/parksmap-green --add --name=jboss-config --mount-path=/opt/eap/standalone/configuration/application-users.properties --sub-path=application-users.properties -n ${GUID}-parks-prod"
 
     // Deploy the inactive application.
     openshiftDeploy depCfg: destApp, namespace: '${GUID}-parks-prod', verbose: 'false', waitTime: '', waitUnit: 'sec'
@@ -165,18 +165,21 @@ podTemplate(
     }
 
 
-//    sh 'oc patch route parksmap-blue -n ${GUID}-parks-prod -p \'{"spec":{"to":{"name":"' + destApp + '"}}}\''
 
 //    stage('Switch to New Version') {
 //        input "Switch production to new version?"
-//        sh "oc patch route ${JOB_BASE_NAME} -n parksmap-prod -p '{\"spec\":{\"to\":{\"name\":\"${destApp}\"}}}'"
-        //    sh 'oc patch route parksmap-blue -n ${GUID}-parks-prod -p \'{"spec":{"to":{"name":"' + destApp + '"}}}\''
+//        sh "oc patch route ${JOB_BASE_NAME} -n ${GUID}-parks-prod -p '{\"spec\":{\"to\":{\"name\":\"${destApp}\"}}}'"
+
+      //echo "Switching Production application to ${destApp}."
 
 //        if (activeApp != "") {
-//            sh "oc patch svc ${activeApp} -n parksmap-prod -p '{\"metadata\":{\"labels\":{\"type\":\"parksmap-inactive\"}}}'"
+//            sh "oc patch svc ${activeApp} -n ${GUID}-parks-prod -p '{\"metadata\":{\"labels\":{\"type\":\"parksmap-inactive\"}}}'"
 //        }
-//        sh "oc patch svc ${destApp} -n parksmap-prod -p '{\"metadata\":{\"labels\":{\"type\":\"parksmap-backend\"}}}'"
+//        sh "oc patch svc ${destApp} -n ${GUID}-parks-prod -p '{\"metadata\":{\"labels\":{\"type\":\"parksmap-backend\"}}}'"
 //    }
+
+//    THIS IS OUTDATED: sh 'oc patch route parksmap-blue -n ${GUID}-parks-prod -p \'{"spec":{"to":{"name":"' + destApp + '"}}}\''
+
 
   }
 }
