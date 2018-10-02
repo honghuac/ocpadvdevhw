@@ -32,7 +32,7 @@ podTemplate(
     // and replace 'GUID' in the file with your ${GUID} to point to >your< Nexus instance
 
 
-    def mvnCmd = "mvn -s ./nexus_settings.xml"
+    def mvnCmd = "mvn -s ./nexus_settings.xml -f ./ParksMap"
 
   // Checkout Source Code.
   stage('Checkout Source') {
@@ -156,8 +156,7 @@ podTemplate(
     // Update the Config Map which contains the users for the application
     //sh "oc delete configmap ${destApp}-config -n ${GUID}-parks-prod --ignore-not-found=true"
     //sh "oc create configmap ${destApp}-config --from-file=./templates/setup_dev/parksmap.properties -n ${GUID}-parks-prod"
-sh "oc set volume dc/tasks-green --add --name=jboss-config --mount-path=/opt/eap/standalone/configuration/application-users.properties --sub-path=application-users.properties"
-
+    //sh "oc set volume dc/parksmap-green --add --name=jboss-config --mount-path=/opt/eap/standalone/configuration/application-users.properties --sub-path=application-users.properties -n ${GUID}-parks-prod"
 
     // Deploy the inactive application.
     openshiftDeploy depCfg: destApp, namespace: '${GUID}-parks-prod', verbose: 'false', waitTime: '', waitUnit: 'sec'
