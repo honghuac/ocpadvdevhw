@@ -33,7 +33,7 @@ podTemplate(
     // and replace 'GUID' in the file with your ${GUID} to point to >your< Nexus instance
 
 
-        def mvnCmd = "mvn -s ./repo_settings.xml -f ./MLBParks"
+        def mvnCmd = "mvn -f ./MLBParks"
 
       // Checkout Source Code.
       stage('Checkout Source') {
