@@ -167,7 +167,7 @@ podTemplate(
         sh "oc create configmap ${destApp}-config --from-file=./Infrastructure/templates/setup_dev/mlbparks.properties -n ${GUID}-parks-prod"
 
         // Deploy the inactive application.
-        openshiftDeploy depCfg: destApp, namespace: '${GUID}-parks-prod', verbose: 'false', waitTime: '', waitUnit: 'sec'
+        openshiftDeploy depCfg: destApp, namespace: '${GUID}-parks-prod', verbose: 'true', waitTime: '', waitUnit: 'sec'
         openshiftVerifyDeployment depCfg: destApp, namespace: '${GUID}-parks-prod', replicaCount: '1', verbose: 'false', verifyReplicaCount: 'true', waitTime: '', waitUnit: 'sec'
         openshiftVerifyService namespace: '${GUID}-parks-prod', svcName: destApp, verbose: 'false'
         }

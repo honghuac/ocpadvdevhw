@@ -159,7 +159,7 @@ podTemplate(
     // THIS IS OUTDATED: sh "oc set volume dc/parksmap-green --add --name=jboss-config --mount-path=/opt/eap/standalone/configuration/application-users.properties --sub-path=application-users.properties -n ${GUID}-parks-prod"
 
     // Deploy the inactive application.
-    openshiftDeploy depCfg: destApp, namespace: '${GUID}-parks-prod', verbose: 'false', waitTime: '', waitUnit: 'sec'
+    openshiftDeploy depCfg: destApp, namespace: '${GUID}-parks-prod', verbose: 'true', waitTime: '', waitUnit: 'sec'
     openshiftVerifyDeployment depCfg: destApp, namespace: '${GUID}-parks-prod', replicaCount: '1', verbose: 'false', verifyReplicaCount: 'true', waitTime: '', waitUnit: 'sec'
     openshiftVerifyService namespace: '${GUID}-parks-prod', svcName: destApp, verbose: 'false'
     }
