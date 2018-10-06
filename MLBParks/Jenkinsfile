@@ -77,7 +77,7 @@ podTemplate(
         // Publish the built war file to Nexus
         stage('Publish to Nexus') {
           echo "Publish to Nexus"
-      sh "${mvnCmd} deploy -DskipTests=true -DaltDeploymentRepository=nexus::default::http://nexus3-${GUID}-nexus.apps.${CLUSTER}/repository/releases"
+      sh "${mvnCmd} -s ./nexus_settings.xml deploy -DskipTests=true -DaltDeploymentRepository=nexus::default::http://nexus3-${GUID}-nexus.apps.${CLUSTER}/repository/releases"
         }
 
         // Build the OpenShift Image in OpenShift and tag it.
@@ -160,7 +160,7 @@ podTemplate(
         echo "Destination Application: " + destApp
 
         // Update the Image on the Production Deployment Config
-        sh "oc set image dc/${destApp} ${destApp}=docker-registry.default.svc:5000/${GUID}-parks-prod/mlbparks:${prodTag} -n ${GUID}-parks-prod"
+        sh "oc set image dc/${destApp} ${destApp}=docker-registry.default.svc:5000/${GUID}-parks-dev/mlbparks:${prodTag} -n ${GUID}-parks-prod"
 
         // Update the Config Map which contains the users for the application
         sh "oc delete configmap ${destApp}-config -n ${GUID}-parks-prod --ignore-not-found=true"
